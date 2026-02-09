@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>택배 배송 게임</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;-webkit-tap-highlight-color:transparent}
+        html,body{width:100%;overflow-x:hidden;background:#f0f2f5}
+        body{min-height:100vh;min-height:100dvh}
+        .screen{display:none;flex-direction:column;min-height:100vh;min-height:100dvh}
+        .screen.active{display:flex}
+        .btn{padding:14px 24px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none}
+        .btn:active{opacity:.85;transform:scale(.97)}
+        .btn-primary{background:#667eea;color:#fff}
+        input[type=text]{width:100%;padding:14px 16px;border:2px solid #e8e8e8;border-radius:12px;font-size:16px;outline:none;-webkit-appearance:none;appearance:none;background:#fff}
+        input[type=text]:focus{border-color:#667eea}
+        .back-link{color:rgba(255,255,255,.8);text-align:center;padding:16px;font-size:14px;cursor:pointer}
+        .back-link:active{color:#fff}
+        .gradient-bg{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+
+        /* 역할선택 */
+        #roleSelect{justify-content:center;align-items:center;padding:24px;gap:20px}
+        #roleSelect h1{color:#fff;font-size:28px;text-align:center}
+        #roleSelect>p{color:rgba(255,255,255,.8);font-size:15px}
+        .role-cards{display:flex;gap:14px;width:100%;max-width:440px}
+        .role-card{flex:1;background:#fff;border-radius:20px;padding:28px 14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.12);cursor:pointer}
+        .role-card:active{transform:scale(.97)}
+        .role-card .icon{font-size:48px;margin-bottom:10px}
+        .role-card h2{font-size:17px;color:#333;margin-bottom:4px}
+        .role-card p{font-size:12px;color:#999}
+        .online-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#43a047;margin-right:4px;animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .online-info{font-size:12px;color:rgba(255,255,255,.7);margin-top:-8px}
+
+        /* 로그인 */
+        #loginScreen{justify-content:center;align-items:center;padding:24px}
+        .login-box{background:#fff;border-radius:20px;padding:36px 24px;width:100%;max-width:400px;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.15)}
+        .login-box h2{font-size:22px;color:#333;margin-bottom:4px}
+        .login-box .sub{color:#aaa;font-size:13px;margin-bottom:24px}
+        .login-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;margin-bottom:10px;border:2px solid #eee;border-radius:14px;background:#fff;font-size:15px;font-weight:600;color:#333;cursor:pointer;-webkit-appearance:none}
+        .login-btn:active{border-color:#667eea;background:#f5f6ff}
+        .login-btn .li{font-size:20px;width:26px;text-align:center}
+
+        /* 택배사 선택 */
+        #carrierSelect{justify-content:center;align-items:center;padding:24px}
+        .carrier-box{background:#fff;border-radius:20px;padding:32px 20px;width:100%;max-width:420px;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.15)}
+        .carrier-box h2{font-size:20px;color:#333;margin-bottom:20px}
+        .carrier-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .carrier-btn{padding:18px 8px;border:2px solid #eee;border-radius:14px;background:#fff;font-size:14px;font-weight:700;color:#333;cursor:pointer;-webkit-appearance:none}
+        .carrier-btn:active{border-color:#667eea;background:#f5f6ff}
+        .carrier-btn .ci{font-size:26px;display:block;margin-bottom:4px}
+
+        /* 직원 메인 */
+        #staffMain{background:#f0f2f5}
+        .top-bar{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.05);flex-shrink:0;position:sticky;top:0;z-index:50}
+        .top-bar h2{font-size:15px;color:#333;display:flex;align-items:center;gap:6px}
+        .badge{background:#667eea;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
+        .btn-logout{background:#ff4757;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+        .tabs{display:flex;background:#fff;border-bottom:1px solid #eee;position:sticky;top:49px;z-index:49;flex-shrink:0}
+        .tab{flex:1;padding:13px 0;text-align:center;font-size:14px;font-weight:700;color:#aaa;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;-webkit-appearance:none}
+        .tab.on{color:#667eea;border-bottom-color:#667eea}
+        .panel{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+        .panel.on{display:block}
+
+        .list-wrap{padding:14px}
+        .wb-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);border-left:4px solid #667eea;cursor:pointer}
+        .wb-card:active{transform:scale(.98)}
+        .wb-card .num{font-weight:700;font-size:15px;color:#333}
+        .wb-card .meta{font-size:12px;color:#999;margin-top:2px}
+        .wb-card .st{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;margin-top:6px}
+        .s0{background:#fff3e0;color:#f57c00}.s1{background:#e3f2fd;color:#1976d2}
+        .s2{background:#e8eaf6;color:#3f51b5}.s3{background:#e0f2f1;color:#00897b}
+        .s4{background:#f3e5f5;color:#8e24aa}.s5{background:#fce4ec;color:#e91e63}
+        .s6{background:#e8f5e9;color:#43a047}
+        .empty-msg{text-align:center;padding:60px 20px;color:#ccc}
+        .empty-msg .ei{font-size:48px;margin-bottom:8px}
+        .empty-msg p{font-size:14px}
+
+        .form-wrap{padding:16px}
+        .card{background:#fff;border-radius:16px;padding:24px 18px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+        .card h3{font-size:19px;color:#333;margin-bottom:4px}
+        .card .desc{font-size:13px;color:#aaa;margin-bottom:18px}
+        .row{display:flex;gap:10px}
+        .row input{flex:1;min-width:0}
+        .row .btn{flex-shrink:0}
+
+        .d-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #f0f0f0}
+        .d-head h3{font-size:17px;color:#333}
+        .btn-sm{background:#f0f2f5;color:#667eea;border:none;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+        .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+        .ig{background:#f8f9fa;padding:11px 14px;border-radius:10px}
+        .ig.full{grid-column:1/-1}
+        .ig label{display:block;font-size:11px;color:#aaa;font-weight:700;margin-bottom:2px}
+        .ig span{font-size:13px;color:#333;font-weight:500;word-break:break-all}
+        .steps-title{font-size:14px;color:#333;font-weight:700;margin-bottom:14px}
+        .step{display:flex;gap:12px}
+        .sl{display:flex;flex-direction:column;align-items:center}
+        .dot{width:28px;height:28px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0;z-index:1}
+        .dot.done{background:#43a047}.dot.now{background:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+        .conn{width:3px;height:32px;background:#e0e0e0}.conn.done{background:#43a047}
+        .sc{padding-top:2px;padding-bottom:18px}
+        .sc .t{font-weight:700;font-size:13px;color:#333}
+        .sc .tm{font-size:11px;color:#aaa;margin-top:1px}
+        .sc .ds{font-size:12px;color:#777;margin-top:1px}
+        .btn-next{width:100%;padding:15px;border:none;border-radius:14px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#667eea,#764ba2);margin-top:14px;-webkit-appearance:none}
+        .btn-next:active{opacity:.85;transform:scale(.98)}
+        .btn-next:disabled{background:#ccc}
+        .done-badge{background:#e8f5e9;color:#43a047;padding:14px;border-radius:12px;text-align:center;font-weight:700;font-size:15px;margin-top:14px}
+
+        /* 고객 */
+        #customerMain{background:linear-gradient(180deg,#667eea 0%,#f0f2f5 30%)}
+        .c-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+        .c-head h2{color:#fff;font-size:17px}
+        .c-head .btn-logout{background:rgba(255,255,255,.2)}
+        .c-body{padding:10px 16px 30px;width:100%;max-width:600px;margin:0 auto}
+        .search-card{background:#fff;border-radius:20px;padding:28px 18px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.1);margin-bottom:14px}
+        .search-card h2{font-size:20px;color:#333;margin-bottom:4px}
+        .search-card>p{font-size:13px;color:#aaa;margin-bottom:18px}
+        .search-row{display:flex;gap:10px}
+        .search-row input{flex:1;min-width:0}
+        .search-row .btn{flex-shrink:0}
+        .result-card{background:#fff;border-radius:20px;padding:22px 18px;box-shadow:0 8px 30px rgba(0,0,0,.06)}
+        .r-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:12px;margin-bottom:14px;border-bottom:2px solid #f0f0f0}
+        .r-head h3{font-size:15px;color:#333}
+        .cur-st{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+        .no-res{text-align:center;padding:40px 16px;color:#aaa}
+        .no-res .ni{font-size:48px;margin-bottom:8px}
+
+        /* 실시간 알림 토스트 */
+        .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}
+        .toast.show{opacity:1}
+
+        /* 로딩 */
+        .loading{text-align:center;padding:40px;color:#999}
+        .spinner{display:inline-block;width:28px;height:28px;border:3px solid #eee;border-top-color:#667eea;border-radius:50%;animation:spin .6s linear infinite;margin-bottom:8px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .fade{animation:fadeUp .25s ease}
+        @media(min-width:768px){#roleSelect h1{font-size:40px}.role-card{padding:36px 20px}.role-card .icon{font-size:60px}.role-card h2{font-size:20px}.info-grid{grid-template-columns:1fr 1fr}}
+    </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- 역할선택 -->
+<div id="roleSelect" class="screen active gradient-bg">
+    <h1>📦 택배 배송 게임</h1>
+    <p>역할을 선택해주세요!</p>
+    <div class="role-cards">
+        <div class="role-card" onclick="go('staff')">
+            <div class="icon">🚚</div>
+            <h2>택배사 직원</h2>
+            <p>택배를 접수하고 배송해요</p>
+        </div>
+        <div class="role-card" onclick="go('customer')">
+            <div class="icon">📱</div>
+            <h2>일반 고객</h2>
+            <p>내 택배 어디있지?</p>
+        </div>
+    </div>
+    <p class="online-info"><span class="online-dot"></span>실시간 멀티플레이 지원</p>
+</div>
+
+<!-- 로그인 -->
+<div id="loginScreen" class="screen gradient-bg">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px">
+        <div class="login-box">
+            <h2 id="lT">로그인</h2>
+            <p class="sub" id="lS">간편 로그인으로 시작하세요</p>
+            <button class="login-btn" onclick="login()"><span class="li">💙</span>삼성페이로 로그인</button>
+            <button class="login-btn" onclick="login()"><span class="li">💛</span>카카오페이로 로그인</button>
+            <button class="login-btn" onclick="login()"><span class="li">🍎</span>Apple로 로그인</button>
+            <button class="login-btn" onclick="login()"><span class="li">🔵</span>Google로 로그인</button>
+        </div>
+    </div>
+    <div class="back-link" onclick="showScr('roleSelect')">← 역할 선택으로 돌아가기</div>
+</div>
+
+<!-- 택배사 선택 -->
+<div id="carrierSelect" class="screen gradient-bg">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px">
+        <div class="carrier-box">
+            <h2>🏢 택배회사 선택</h2>
+            <div class="carrier-grid">
+                <button class="carrier-btn" onclick="pickCarrier('CJ대한통운')"><span class="ci">📦</span>CJ대한통운</button>
+                <button class="carrier-btn" onclick="pickCarrier('한진택배')"><span class="ci">🚛</span>한진택배</button>
+                <button class="carrier-btn" onclick="pickCarrier('롯데택배')"><span class="ci">🚚</span>롯데택배</button>
+                <button class="carrier-btn" onclick="pickCarrier('로젠택배')"><span class="ci">📫</span>로젠택배</button>
+                <button class="carrier-btn" onclick="pickCarrier('우체국택배')"><span class="ci">🏣</span>우체국택배</button>
+                <button class="carrier-btn" onclick="pickCarrier('쿠팡로켓')"><span class="ci">🚀</span>쿠팡로켓</button>
+            </div>
+        </div>
+    </div>
+    <div class="back-link" onclick="showScr('loginScreen')">← 뒤로가기</div>
+</div>
+
+<!-- 직원 메인 -->
+<div id="staffMain" class="screen">
+    <div class="top-bar">
+        <h2>📦 택배관리 <span class="badge" id="cBadge"></span></h2>
+        <button class="btn-logout" onclick="showScr('roleSelect')">로그아웃</button>
+    </div>
+    <div class="tabs">
+        <button class="tab on" id="t1" onclick="tab(1)">📋 목록</button>
+        <button class="tab" id="t2" onclick="tab(2)">📝 입력</button>
+    </div>
+    <div class="panel on" id="p1">
+        <div class="list-wrap" id="wList">
+            <div class="loading"><div class="spinner"></div><p>불러오는 중...</p></div>
+        </div>
+    </div>
+    <div class="panel" id="p2">
+        <div class="form-wrap" id="mainArea"></div>
+    </div>
+</div>
+
+<!-- 고객 메인 -->
+<div id="customerMain" class="screen">
+    <div class="c-head">
+        <h2>📦 택배 조회</h2>
+        <button class="btn-logout" onclick="showScr('roleSelect')">로그아웃</button>
+    </div>
+    <div class="c-body">
+        <div class="search-card fade">
+            <h2>🔍 배송 조회</h2>
+            <p>운송장 번호를 입력하세요</p>
+            <div class="search-row">
+                <input type="text" id="tInput" placeholder="운송장 번호" maxlength="15" inputmode="numeric" onkeypress="if(event.key==='Enter')track()">
+                <button class="btn btn-primary" onclick="track()">조회</button>
+            </div>
+        </div>
+        <div id="tResult"></div>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// ========== Firebase 초기화 ==========
+const firebaseConfig = {
+    apiKey: "AIzaSyDl17AYbeSNRMP4JANIcJc_a1c6fus9OuA",
+    authDomain: "abcd-c0ead.firebaseapp.com",
+    databaseURL: "https://abcd-c0ead-default-rtdb.firebaseio.com",
+    projectId: "abcd-c0ead",
+    storageBucket: "abcd-c0ead.firebasestorage.app",
+    messagingSenderId: "1065808686638",
+    appId: "1:1065808686638:web:e36f122d059a8d788b79bf"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const wbRef = db.ref('waybills');
+
+// ========== 데이터 ==========
+let role='', carrier='', wb={}, currentView='';
+
+const ST=[
+    {n:'상품 접수',i:'📋',d:'택배 접수가 완료되었습니다'},
+    {n:'집하 완료',i:'📦',d:'물류센터에서 상품을 수거했습니다'},
+    {n:'지역 물류센터 도착',i:'🏭',d:'지역 물류센터에 도착했습니다'},
+    {n:'배송지 도착',i:'🏬',d:'배송지 근처 센터에 도착했습니다'},
+    {n:'배송 출발',i:'🚚',d:'배송 기사님이 출발했습니다'},
+    {n:'배송 중',i:'📍',d:'고객님께 배달 중입니다'},
+    {n:'배송 완료',i:'✅',d:'배송이 완료되었습니다'}
+];
+const ITEMS=['운동화','장난감 로봇','그림책 세트','과자 선물세트','블록 장난감','인형','티셔츠','텀블러','이어폰','쿠키 세트','색연필 세트','퍼즐','보드게임','축구공','가방','모자'];
+const NAMES=['김민준','이서연','박지호','최수아','정도윤','강하은','조시우','윤지아','장예준','한소율','임건우','오나윤'];
+const CITY=['서울','부산','대구','인천','광주','대전','울산','수원','고양','용인','성남','청주','천안'];
+const ROAD=['한빛로','행복길','미래로','푸른길','별빛로','꿈나무길','사랑로','희망길','햇살길'];
+
+function pk(a){return a[Math.floor(Math.random()*a.length)]}
+function rAddr(){return pk(CITY)+' '+pk(ROAD)+' '+Math.floor(Math.random()*200+1)+'번길 '+Math.floor(Math.random()*50+1)+'호'}
+
+// ========== 토스트 알림 ==========
+function toast(msg){
+    const el=document.getElementById('toast');
+    el.textContent=msg;
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ========== 화면 전환 ==========
+function showScr(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// ========== 실시간 데이터 리스너 ==========
+wbRef.on('value', snap => {
+    wb = snap.val() || {};
+    renderList();
+    // 현재 상세 보고있는 운송장이 있으면 자동 갱신
+    if(currentView && wb[currentView]){
+        openDetail(currentView, true);
+    }
+});
+
+// ========== 역할선택 ==========
+function go(r){
+    role=r;
+    document.getElementById('lT').textContent=r==='staff'?'택배사 직원 로그인':'고객 로그인';
+    document.getElementById('lS').textContent=r==='staff'?'직원 계정으로 로그인하세요':'택배 조회를 위해 로그인하세요';
+    showScr('loginScreen');
+}
+
+// 로그인
+function login(){
+    if(role==='staff') showScr('carrierSelect');
+    else showScr('customerMain');
+}
+
+// 택배사
+function pickCarrier(c){
+    carrier=c;
+    document.getElementById('cBadge').textContent=c;
+    showScr('staffMain');
+    renderList();
+    showForm();
+}
+
+// 탭
+function tab(n){
+    document.getElementById('t1').classList.toggle('on',n===1);
+    document.getElementById('t2').classList.toggle('on',n===2);
+    document.getElementById('p1').classList.toggle('on',n===1);
+    document.getElementById('p2').classList.toggle('on',n===2);
+}
+
+// ========== 목록 ==========
+function renderList(){
+    const el=document.getElementById('wList');
+    const keys=Object.keys(wb);
+    if(!keys.length){
+        el.innerHTML='<div class="empty-msg"><div class="ei">📭</div><p>등록된 운송장이 없어요<br><span style="font-size:12px;color:#ddd">입력 탭에서 등록해주세요</span></p></div>';
+        return;
+    }
+    el.innerHTML=keys.slice().reverse().map(k=>{
+        const w=wb[k],s=w.cs;
+        return `<div class="wb-card" onclick="openDetail('${k}')">
+            <div class="num">${k}</div>
+            <div class="meta">${w.item} · ${w.wt}</div>
+            <span class="st s${s}">${ST[s].i} ${ST[s].n}</span>
+        </div>`;
+    }).join('');
+}
+
+// ========== 입력폼 ==========
+function showForm(){
+    currentView='';
+    document.getElementById('mainArea').innerHTML=`
+        <div class="card fade">
+            <h3>📝 운송장 번호 입력</h3>
+            <p class="desc">새 택배를 등록하려면 운송장 번호를 입력하세요</p>
+            <div class="row">
+                <input type="text" id="wInput" placeholder="운송장 번호 입력" maxlength="15" inputmode="numeric" onkeypress="if(event.key==='Enter')reg()">
+                <button class="btn btn-primary" onclick="reg()">등록</button>
+            </div>
+        </div>`;
+}
+
+// ========== 등록 (Firebase에 저장) ==========
+function reg(){
+    const inp=document.getElementById('wInput');
+    const num=inp.value.trim();
+    if(!num){inp.style.borderColor='#ff4757';setTimeout(()=>inp.style.borderColor='#e8e8e8',800);return;}
+    if(wb[num]){alert('이미 등록된 번호입니다!');return;}
+
+    const data={
+        item:pk(ITEMS), wt:(Math.random()*9+0.5).toFixed(1)+'kg',
+        from:pk(NAMES), fa:rAddr(),
+        to:pk(NAMES), ta:rAddr(),
+        cr:carrier, cs:0,
+        times:{0:new Date().toLocaleString('ko-KR')},
+        date:new Date().toLocaleString('ko-KR')
+    };
+
+    // Firebase에 저장
+    wbRef.child(num).set(data).then(()=>{
+        toast('📦 운송장 '+num+' 등록 완료!');
+        inp.value='';
+        openDetail(num);
+    }).catch(err=>{
+        alert('저장 실패: '+err.message);
+    });
+}
+
+// ========== 상세 ==========
+function openDetail(num, silent){
+    tab(2);
+    currentView=num;
+    const w=wb[num]; if(!w) return;
+    if(!silent) toast('📋 운송장 '+num+' 조회');
+
+    let sh='';
+    for(let i=0;i<ST.length;i++){
+        const s=ST[i];
+        let dc='',cc='',tm='';
+        if(i<w.cs){dc='done';cc='done';tm=w.times[i]||'';}
+        else if(i===w.cs){dc='now';tm=w.times[i]||'';}
+        sh+=`<div class="step">
+            <div class="sl">
+                <div class="dot ${dc}">${i<w.cs?'✓':s.i}</div>
+                ${i<ST.length-1?`<div class="conn ${cc}"></div>`:''}
+            </div>
+            <div class="sc">
+                <div class="t">${s.n}</div>
+                ${tm?`<div class="tm">${tm}</div>`:''}
+                ${i<=w.cs?`<div class="ds">${s.d}</div>`:''}
+            </div>
+        </div>`;
+    }
+    const done=w.cs>=ST.length-1;
+    const nx=!done&&ST[w.cs+1];
+    document.getElementById('mainArea').innerHTML=`
+        <div class="card fade">
+            <div class="d-head">
+                <h3>📦 ${num}</h3>
+                <button class="btn-sm" onclick="showForm()">+ 새 운송장</button>
+            </div>
+            <div class="info-grid">
+                <div class="ig"><label>물품명</label><span>${w.item}</span></div>
+                <div class="ig"><label>무게</label><span>${w.wt}</span></div>
+                <div class="ig"><label>보내는 분</label><span>${w.from}</span></div>
+                <div class="ig full"><label>보내는 주소</label><span>${w.fa}</span></div>
+                <div class="ig"><label>받는 분</label><span>${w.to}</span></div>
+                <div class="ig full"><label>받는 주소</label><span>${w.ta}</span></div>
+                <div class="ig"><label>택배사</label><span>${w.cr}</span></div>
+                <div class="ig"><label>접수일시</label><span>${w.date}</span></div>
+            </div>
+            <div class="steps-title">📍 배송 진행 현황</div>
+            ${sh}
+            ${done
+                ?'<div class="done-badge">🎉 배송이 완료되었습니다!</div>'
+                :`<button class="btn-next" onclick="next('${num}')">${nx.i} 다음 단계: ${nx.n}</button>`
+            }
+        </div>`;
+}
+
+// ========== 다음단계 (Firebase 업데이트) ==========
+function next(num){
+    const w=wb[num]; if(!w||w.cs>=ST.length-1) return;
+    const newStep = w.cs + 1;
+    const updates = {};
+    updates['cs'] = newStep;
+    updates['times/'+newStep] = new Date().toLocaleString('ko-KR');
+
+    wbRef.child(num).update(updates).then(()=>{
+        toast(ST[newStep].i+' '+ST[newStep].n);
+    }).catch(err=>{
+        alert('업데이트 실패: '+err.message);
+    });
+}
+
+// ========== 고객 조회 ==========
+function track(){
+    const inp=document.getElementById('tInput');
+    const num=inp.value.trim();
+    const rd=document.getElementById('tResult');
+    if(!num){inp.style.borderColor='#ff4757';setTimeout(()=>inp.style.borderColor='#e8e8e8',800);return;}
+
+    // Firebase에서 실시간 조회
+    db.ref('waybills/'+num).once('value').then(snap=>{
+        const w=snap.val();
+        if(!w){
+            rd.innerHTML=`<div class="result-card fade"><div class="no-res"><div class="ni">🔍</div><p>운송장 번호 <b>${num}</b>에 대한<br>배송 정보를 찾을 수 없습니다.</p><p style="font-size:12px;margin-top:6px;color:#ccc">번호를 다시 확인해주세요</p></div></div>`;
+            return;
+        }
+        renderTracking(num, w, rd);
+
+        // 실시간 감시 시작 - 직원이 상태 바꾸면 자동 갱신
+        db.ref('waybills/'+num).on('value', snap2=>{
+            const w2=snap2.val();
+            if(w2) renderTracking(num, w2, rd);
+        });
+    });
+}
+
+function renderTracking(num, w, rd){
+    let sh='';
+    for(let i=0;i<ST.length;i++){
+        const s=ST[i];
+        let dc='',cc='',tm='';
+        if(i<w.cs){dc='done';cc='done';tm=w.times[i]||'';}
+        else if(i===w.cs){dc='now';tm=w.times[i]||'';}
+        sh+=`<div class="step">
+            <div class="sl">
+                <div class="dot ${dc}">${i<w.cs?'✓':s.i}</div>
+                ${i<ST.length-1?`<div class="conn ${cc}"></div>`:''}
+            </div>
+            <div class="sc">
+                <div class="t">${s.n}</div>
+                ${tm?`<div class="tm">${tm}</div>`:''}
+                ${i<=w.cs?`<div class="ds">${s.d}</div>`:''}
+            </div>
+        </div>`;
+    }
+    rd.innerHTML=`
+        <div class="result-card fade">
+            <div class="r-head">
+                <h3>📦 ${num}</h3>
+                <span class="cur-st s${w.cs}">${ST[w.cs].i} ${ST[w.cs].n}</span>
+            </div>
+            <div style="background:#f0f7ff;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:12px;color:#667eea;font-weight:600;text-align:center">
+                <span class="online-dot"></span> 실시간 업데이트 중
+            </div>
+            <div class="info-grid" style="margin-bottom:18px">
+                <div class="ig"><label>물품명</label><span>${w.item}</span></div>
+                <div class="ig"><label>택배사</label><span>${w.cr}</span></div>
+                <div class="ig"><label>보내는 분</label><span>${w.from}</span></div>
+                <div class="ig"><label>받는 분</label><span>${w.to}</span></div>
+                <div class="ig full"><label>받는 주소</label><span>${w.ta}</span></div>
+                <div class="ig"><label>접수일시</label><span>${w.date}</span></div>
+            </div>
+            <div class="steps-title">📍 배송 추적</div>
+            ${sh}
+            ${w.cs>=ST.length-1?'<div class="done-badge">🎉 배송이 완료되었습니다!</div>':''}
+        </div>`;
+}
+</script>
+</body>
+</html>
