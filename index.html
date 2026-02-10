@@ -3,28 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>택배 배송 게임</title>
+    <title>📦 택배 배송 게임 v3.0</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;-webkit-tap-highlight-color:transparent}
         html,body{width:100%;overflow-x:hidden;background:#f0f2f5}
-        body{min-height:100vh;min-height:100dvh}
+        body{min-height:100vh;min-height:100dvh;transition:background .3s,color .3s}
         .screen{display:none;flex-direction:column;min-height:100vh;min-height:100dvh}
         .screen.active{display:flex}
-        .btn{padding:14px 24px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none}
+        .btn{padding:14px 24px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none;transition:all .15s}
         .btn:active{opacity:.85;transform:scale(.97)}
         .btn-primary{background:#667eea;color:#fff}
-        input[type=text]{width:100%;padding:14px 16px;border:2px solid #e8e8e8;border-radius:12px;font-size:16px;outline:none;-webkit-appearance:none;appearance:none;background:#fff}
-        input[type=text]:focus{border-color:#667eea}
+        input[type=text],textarea{width:100%;padding:14px 16px;border:2px solid #e8e8e8;border-radius:12px;font-size:16px;outline:none;-webkit-appearance:none;appearance:none;background:#fff;transition:border-color .2s}
+        input[type=text]:focus,textarea:focus{border-color:#667eea}
         .back-link{color:rgba(255,255,255,.8);text-align:center;padding:16px;font-size:14px;cursor:pointer}
-        .back-link:active{color:#fff}
         .gradient-bg{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
 
-        /* 역할선택 */
+        body.dark{background:#1a1a2e;color:#e0e0e0}
+        body.dark .top-bar,body.dark .tabs,body.dark .filter-bar{background:#16213e;border-color:#1a1a3e}
+        body.dark .wb-card,body.dark .card,body.dark .search-card,body.dark .result-card,body.dark .c-wb-card{background:#16213e;color:#e0e0e0}
+        body.dark .wb-card .num,body.dark .card h3,body.dark .d-head h3,body.dark .r-head h3,body.dark .c-wb-card .num{color:#e0e0e0}
+        body.dark .wb-card .meta,body.dark .card .desc,body.dark .c-wb-card .meta{color:#888}
+        body.dark .ig{background:#0f3460}
+        body.dark .ig label{color:#8899aa}
+        body.dark .ig span{color:#e0e0e0}
+        body.dark input[type=text],body.dark textarea{background:#16213e;border-color:#2a2a4a;color:#e0e0e0}
+        body.dark .tab{color:#666}body.dark .tab.on{color:#667eea}
+        body.dark .btn-sm{background:#0f3460;color:#667eea}
+        body.dark .carrier-box{background:#16213e}body.dark .carrier-box h2{color:#e0e0e0}
+        body.dark .carrier-btn{background:#0f3460;border-color:#2a2a4a;color:#e0e0e0}
+        body.dark .steps-title,body.dark .sc .t{color:#e0e0e0}
+        body.dark .empty-msg p{color:#555}
+        body.dark #customerMain{background:linear-gradient(180deg,#667eea 0%,#1a1a2e 30%)}
+        body.dark .top-bar h2{color:#e0e0e0}
+        body.dark .rank-item,body.dark .shop-item{background:#16213e}
+        body.dark .chat-box{background:#0f3460;border-color:#2a2a4a}
+        body.dark .chat-msg.customer{background:#2a2a4a;color:#e0e0e0}
+        body.dark .modal-box{background:#16213e;color:#e0e0e0}body.dark .modal-box p{color:#aaa}
+        body.dark .minigame-area{background:#0f3460}
+        body.dark .qr-box{background:#16213e}
+        body.dark .c-list-title{color:#e0e0e0}
+        body.dark .filter-btn,body.dark .c-filter-btn{background:#0f3460;color:#aaa;border-color:#2a2a4a}
+        body.dark .filter-btn.on,body.dark .c-filter-btn.on{color:#667eea}
+        body.dark .notif-panel{background:#16213e;border-color:#2a2a4a}
+        body.dark .notif-item{border-color:#2a2a4a}
+        body.dark .notif-item .ni-text{color:#e0e0e0}
+        body.dark .notif-item .ni-time{color:#666}
+        body.dark .chatroom-item{background:#16213e;border-color:#2a2a4a}
+        body.dark .chatroom-item .cr-name{color:#e0e0e0}
+        body.dark .memo-box{background:#0f3460;border-color:#2a2a4a}
+        body.dark .graph-bar-bg{background:#2a2a4a}
+        body.dark .search-card h2{color:#e0e0e0}
+        body.dark .search-card>p{color:#888}
+
         #roleSelect{justify-content:center;align-items:center;padding:24px;gap:20px}
         #roleSelect h1{color:#fff;font-size:28px;text-align:center}
         #roleSelect>p{color:rgba(255,255,255,.8);font-size:15px}
         .role-cards{display:flex;gap:14px;width:100%;max-width:440px}
-        .role-card{flex:1;background:#fff;border-radius:20px;padding:28px 14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.12);cursor:pointer}
+        .role-card{flex:1;background:#fff;border-radius:20px;padding:28px 14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.12);cursor:pointer;transition:transform .15s}
         .role-card:active{transform:scale(.97)}
         .role-card .icon{font-size:48px;margin-bottom:10px}
         .role-card h2{font-size:17px;color:#333;margin-bottom:4px}
@@ -33,16 +68,6 @@
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
         .online-info{font-size:12px;color:rgba(255,255,255,.7);margin-top:-8px}
 
-        /* 로그인 */
-        #loginScreen{justify-content:center;align-items:center;padding:24px}
-        .login-box{background:#fff;border-radius:20px;padding:36px 24px;width:100%;max-width:400px;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.15)}
-        .login-box h2{font-size:22px;color:#333;margin-bottom:4px}
-        .login-box .sub{color:#aaa;font-size:13px;margin-bottom:24px}
-        .login-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;margin-bottom:10px;border:2px solid #eee;border-radius:14px;background:#fff;font-size:15px;font-weight:600;color:#333;cursor:pointer;-webkit-appearance:none}
-        .login-btn:active{border-color:#667eea;background:#f5f6ff}
-        .login-btn .li{font-size:20px;width:26px;text-align:center}
-
-        /* 택배사 선택 */
         #carrierSelect{justify-content:center;align-items:center;padding:24px}
         .carrier-box{background:#fff;border-radius:20px;padding:32px 20px;width:100%;max-width:420px;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.15)}
         .carrier-box h2{font-size:20px;color:#333;margin-bottom:20px}
@@ -51,20 +76,31 @@
         .carrier-btn:active{border-color:#667eea;background:#f5f6ff}
         .carrier-btn .ci{font-size:26px;display:block;margin-bottom:4px}
 
-        /* 직원 메인 */
         #staffMain{background:#f0f2f5}
-        .top-bar{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.05);flex-shrink:0;position:sticky;top:0;z-index:50}
-        .top-bar h2{font-size:15px;color:#333;display:flex;align-items:center;gap:6px}
-        .badge{background:#667eea;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
-        .btn-logout{background:#ff4757;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;-webkit-appearance:none}
-        .tabs{display:flex;background:#fff;border-bottom:1px solid #eee;position:sticky;top:49px;z-index:49;flex-shrink:0}
-        .tab{flex:1;padding:13px 0;text-align:center;font-size:14px;font-weight:700;color:#aaa;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;-webkit-appearance:none}
+        body.dark #staffMain{background:#1a1a2e}
+        .top-bar{background:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.05);flex-shrink:0;position:sticky;top:0;z-index:50;gap:6px;flex-wrap:wrap}
+        .top-bar h2{font-size:13px;color:#333;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+        .badge{background:#667eea;color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+        .level-badge{background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+        .coin-badge{background:linear-gradient(135deg,#f6d365,#fda085);color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+        .ing-badge{background:#43a047;color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+        .top-right{display:flex;align-items:center;gap:6px}
+        .btn-logout{background:#ff4757;color:#fff;border:none;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0}
+        .btn-icon{background:#555;color:#fff;border:none;padding:6px 8px;border-radius:8px;font-size:14px;cursor:pointer;flex-shrink:0;line-height:1}
+        .tabs{display:flex;background:#fff;border-bottom:1px solid #eee;position:sticky;top:46px;z-index:49;flex-shrink:0}
+        .tab{flex:1;padding:11px 0;text-align:center;font-size:12px;font-weight:700;color:#aaa;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;position:relative}
         .tab.on{color:#667eea;border-bottom-color:#667eea}
+        .tab-badge{position:absolute;top:4px;right:calc(50% - 20px);background:#ff4757;color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-weight:800}
         .panel{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
         .panel.on{display:block}
 
+        .filter-bar{display:flex;gap:6px;padding:10px 14px;background:#fff;border-bottom:1px solid #eee;flex-wrap:wrap;align-items:center}
+        .filter-btn{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid #e0e0e0;background:#fff;color:#aaa;cursor:pointer}
+        .filter-btn.on{border-color:#667eea;color:#667eea;background:#f0f3ff}
+        .filter-sep{width:1px;height:18px;background:#e0e0e0;margin:0 2px}
+
         .list-wrap{padding:14px}
-        .wb-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);border-left:4px solid #667eea;cursor:pointer}
+        .wb-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);border-left:4px solid #667eea;cursor:pointer;transition:transform .1s}
         .wb-card:active{transform:scale(.98)}
         .wb-card .num{font-weight:700;font-size:15px;color:#333}
         .wb-card .meta{font-size:12px;color:#999;margin-top:2px}
@@ -75,10 +111,9 @@
         .s6{background:#e8f5e9;color:#43a047}
         .empty-msg{text-align:center;padding:60px 20px;color:#ccc}
         .empty-msg .ei{font-size:48px;margin-bottom:8px}
-        .empty-msg p{font-size:14px}
 
         .form-wrap{padding:16px}
-        .card{background:#fff;border-radius:16px;padding:24px 18px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+        .card{background:#fff;border-radius:16px;padding:24px 18px;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:14px}
         .card h3{font-size:19px;color:#333;margin-bottom:4px}
         .card .desc{font-size:13px;color:#aaa;margin-bottom:18px}
         .row{display:flex;gap:10px}
@@ -87,7 +122,8 @@
 
         .d-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #f0f0f0}
         .d-head h3{font-size:17px;color:#333}
-        .btn-sm{background:#f0f2f5;color:#667eea;border:none;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+        .btn-sm{background:#f0f2f5;color:#667eea;border:none;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer}
+        .btn-del{background:#ff4757;color:#fff;border:none;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer}
         .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
         .ig{background:#f8f9fa;padding:11px 14px;border-radius:10px}
         .ig.full{grid-column:1/-1}
@@ -103,16 +139,21 @@
         .sc .t{font-weight:700;font-size:13px;color:#333}
         .sc .tm{font-size:11px;color:#aaa;margin-top:1px}
         .sc .ds{font-size:12px;color:#777;margin-top:1px}
-        .btn-next{width:100%;padding:15px;border:none;border-radius:14px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#667eea,#764ba2);margin-top:14px;-webkit-appearance:none}
+        .btn-next{width:100%;padding:15px;border:none;border-radius:14px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#667eea,#764ba2);margin-top:14px}
         .btn-next:active{opacity:.85;transform:scale(.98)}
-        .btn-next:disabled{background:#ccc}
         .done-badge{background:#e8f5e9;color:#43a047;padding:14px;border-radius:12px;text-align:center;font-weight:700;font-size:15px;margin-top:14px}
 
-        /* 고객 */
+        /* 메모 */
+        .memo-box{background:#fffde7;border:2px solid #fff9c4;border-radius:12px;padding:12px 14px;margin-bottom:14px}
+        .memo-box label{font-size:12px;font-weight:700;color:#f9a825;display:block;margin-bottom:4px}
+        .memo-box p{font-size:13px;color:#333}
+        body.dark .memo-box p{color:#e0e0e0}
+
         #customerMain{background:linear-gradient(180deg,#667eea 0%,#f0f2f5 30%)}
         .c-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
         .c-head h2{color:#fff;font-size:17px}
-        .c-head .btn-logout{background:rgba(255,255,255,.2)}
+        .c-head .top-right .btn-logout{background:rgba(255,255,255,.2)}
+        .c-head .top-right .btn-icon{background:rgba(255,255,255,.2)}
         .c-body{padding:10px 16px 30px;width:100%;max-width:600px;margin:0 auto}
         .search-card{background:#fff;border-radius:20px;padding:28px 18px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.1);margin-bottom:14px}
         .search-card h2{font-size:20px;color:#333;margin-bottom:4px}
@@ -120,70 +161,173 @@
         .search-row{display:flex;gap:10px}
         .search-row input{flex:1;min-width:0}
         .search-row .btn{flex-shrink:0}
-        .result-card{background:#fff;border-radius:20px;padding:22px 18px;box-shadow:0 8px 30px rgba(0,0,0,.06)}
+        .result-card{background:#fff;border-radius:20px;padding:22px 18px;box-shadow:0 8px 30px rgba(0,0,0,.06);margin-bottom:14px}
         .r-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:12px;margin-bottom:14px;border-bottom:2px solid #f0f0f0}
         .r-head h3{font-size:15px;color:#333}
         .cur-st{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
         .no-res{text-align:center;padding:40px 16px;color:#aaa}
         .no-res .ni{font-size:48px;margin-bottom:8px}
 
-        /* 실시간 알림 토스트 */
+        .notif-wrap{position:relative}
+        .notif-btn{background:none;border:none;font-size:20px;cursor:pointer;position:relative;padding:4px 6px}
+        .notif-count{position:absolute;top:-2px;right:0;background:#ff4757;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:10px;min-width:14px;text-align:center;line-height:13px}
+        .notif-panel{position:absolute;top:36px;right:0;width:280px;max-height:360px;overflow-y:auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);z-index:100;display:none;border:1px solid #eee}
+        .notif-panel.open{display:block}
+        .notif-header{padding:12px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+        .notif-header h3{font-size:14px;font-weight:700}
+        .notif-clear{font-size:11px;color:#667eea;font-weight:700;cursor:pointer;background:none;border:none}
+        .notif-item{padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer}
+        .notif-item:active{background:#f5f6ff}
+        .notif-item.unread{background:#f0f3ff}
+        body.dark .notif-item.unread{background:#1a1a4a}
+        .ni-text{font-size:12px;color:#333;font-weight:600}
+        .ni-time{font-size:10px;color:#aaa;margin-top:2px}
+        .notif-empty{padding:30px;text-align:center;color:#aaa;font-size:12px}
+
         .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}
         .toast.show{opacity:1}
 
-        /* 로딩 */
-        .loading{text-align:center;padding:40px;color:#999}
-        .spinner{display:inline-block;width:28px;height:28px;border:3px solid #eee;border-top-color:#667eea;border-radius:50%;animation:spin .6s linear infinite;margin-bottom:8px}
-        @keyframes spin{to{transform:rotate(360deg)}}
-
+        .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;overflow:hidden}
+        .confetti-piece{position:absolute;width:10px;height:10px;top:-10px;animation:confettiFall 3s ease-in forwards}
+        @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         .fade{animation:fadeUp .25s ease}
-        @media(min-width:768px){#roleSelect h1{font-size:40px}.role-card{padding:36px 20px}.role-card .icon{font-size:60px}.role-card h2{font-size:20px}.info-grid{grid-template-columns:1fr 1fr}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9000;display:flex;justify-content:center;align-items:center;padding:20px}
+        .modal-box{background:#fff;border-radius:20px;padding:32px 24px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:fadeUp .3s ease}
+        .modal-box h2{font-size:22px;margin-bottom:8px}
+        .modal-box p{font-size:14px;color:#777;margin-bottom:20px;line-height:1.5}
+        .modal-btns{display:flex;gap:10px;flex-direction:column}
+        .modal-btn{padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+        .modal-btn.good{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+        .modal-btn.bad{background:#ff4757;color:#fff}
+
+        .map-box{background:#e8f4fd;border-radius:14px;padding:16px;margin-bottom:18px;position:relative;overflow:hidden;height:180px}
+        body.dark .map-box{background:#0a1628}
+
+        .chat-box{border:2px solid #eee;border-radius:14px;padding:12px;margin-top:10px;max-height:250px;overflow-y:auto;background:#fafafa}
+        .chat-msg{padding:6px 12px;border-radius:10px;margin-bottom:6px;font-size:13px;max-width:80%;word-break:break-all}
+        .chat-msg.staff{background:#667eea;color:#fff;margin-left:auto}
+        .chat-msg.customer{background:#e8e8e8;color:#333}
+        .chat-msg .sender{font-size:10px;font-weight:700;opacity:.7;margin-bottom:2px}
+        .chat-input-row{display:flex;gap:8px;margin-top:8px}
+        .chat-input-row input{flex:1;padding:10px 12px;font-size:13px}
+        .chat-input-row button{padding:10px 16px;font-size:13px}
+
+        /* 채팅방 목록 */
+        .chatroom-item{background:#fff;border:1px solid #eee;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:transform .1s}
+        .chatroom-item:active{transform:scale(.98)}
+        .cr-left{flex:1}
+        .cr-name{font-weight:700;font-size:14px;color:#333}
+        .cr-preview{font-size:12px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+        .cr-badge{background:#ff4757;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:800;flex-shrink:0}
+
+        .star-row{display:flex;gap:4px;justify-content:center;margin:12px 0}
+        .star{font-size:32px;cursor:pointer;opacity:.3;transition:opacity .15s}
+        .star.on{opacity:1}
+
+        .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+        .dash-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:18px 14px;text-align:center}
+        .dash-card .dv{font-size:28px;font-weight:800}
+        .dash-card .dl{font-size:11px;opacity:.8;margin-top:2px}
+        .dash-card.gold{background:linear-gradient(135deg,#f6d365,#fda085)}
+        .dash-card.green{background:linear-gradient(135deg,#11998e,#38ef7d)}
+        .dash-card.pink{background:linear-gradient(135deg,#f093fb,#f5576c)}
+
+        /* 그래프 */
+        .graph-section{margin-top:18px}
+        .graph-title{font-size:14px;font-weight:700;margin-bottom:12px;color:#333}
+        body.dark .graph-title{color:#e0e0e0}
+        .graph-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+        .graph-label{font-size:12px;font-weight:600;width:80px;text-align:right;color:#666;flex-shrink:0}
+        body.dark .graph-label{color:#aaa}
+        .graph-bar-bg{flex:1;height:22px;background:#f0f0f0;border-radius:11px;overflow:hidden;position:relative}
+        .graph-bar-fill{height:100%;border-radius:11px;transition:width .5s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:700;color:#fff;min-width:0}
+        .graph-bar-fill.purple{background:linear-gradient(90deg,#667eea,#764ba2)}
+        .graph-bar-fill.green{background:linear-gradient(90deg,#11998e,#38ef7d)}
+        .graph-bar-fill.orange{background:linear-gradient(90deg,#f6d365,#fda085)}
+        .graph-bar-fill.pink{background:linear-gradient(90deg,#f093fb,#f5576c)}
+        .graph-bar-fill.blue{background:linear-gradient(90deg,#667eea,#56ccf2)}
+
+        .rank-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+        .rank-num{font-size:20px;font-weight:800;color:#667eea;width:32px;text-align:center}
+        .rank-num.g{color:#ffd700}.rank-num.s{color:#c0c0c0}.rank-num.b{color:#cd7f32}
+
+        .exp-bar-wrap{width:100%;background:#e0e0e0;border-radius:10px;height:8px;margin-top:4px;overflow:hidden}
+        .exp-bar-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:10px;transition:width .5s ease}
+
+        .mission-bar{background:linear-gradient(90deg,#ff6b6b,#ffa502);color:#fff;padding:10px 16px;font-size:13px;font-weight:700;text-align:center;border-radius:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+        .mission-bar .timer{font-size:18px;font-weight:800}
+
+        .recent-list{margin-top:14px}
+        .recent-item{display:inline-block;background:#667eea;color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;margin:3px;cursor:pointer}
+
+        .qr-box{text-align:center;margin:14px 0;padding:16px;background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .qr-canvas{border:4px solid #667eea;border-radius:12px;display:inline-block}
+
+        .special-tag{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px}
+        .tag-frozen{background:#e3f2fd;color:#1976d2}
+        .tag-fragile{background:#fce4ec;color:#e91e63}
+        .tag-express{background:#fff3e0;color:#f57c00}
+
+        .balance-bar{width:100%;height:40px;background:#e0e0e0;border-radius:20px;position:relative;overflow:hidden;margin:12px 0}
+        .balance-indicator{width:20px;height:20px;background:#667eea;border-radius:50%;position:absolute;top:10px;transition:left .1s}
+        .balance-zone{position:absolute;top:0;height:100%;background:rgba(67,160,71,.2);border-radius:20px}
+
+        .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .shop-item{background:#fff;border-radius:14px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04);cursor:pointer;border:2px solid transparent;transition:all .15s}
+        .shop-item:active{transform:scale(.97)}
+        .shop-item.owned{border-color:#43a047}
+        .shop-item.equipped{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.3)}
+        .shop-item .si{font-size:36px;margin-bottom:6px}
+        .shop-item .sn{font-size:13px;font-weight:700}
+        .shop-item .sp{font-size:12px;color:#fda085;font-weight:700;margin-top:4px}
+
+        .c-list-title{font-size:15px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+        .c-wb-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);border-left:4px solid #667eea;cursor:pointer;transition:transform .1s}
+        .c-wb-card:active{transform:scale(.98)}
+        .c-wb-card .num{font-weight:700;font-size:15px;color:#333}
+        .c-wb-card .meta{font-size:12px;color:#999;margin-top:2px}
+        .c-wb-card .st{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;margin-top:6px}
+        .new-badge{background:#ff4757;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;margin-left:6px;animation:pulse 1s infinite}
+
+        .c-filter-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+        .c-filter-btn{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid #e0e0e0;background:#fff;color:#aaa;cursor:pointer}
+        .c-filter-btn.on{border-color:#667eea;color:#667eea;background:#f0f3ff}
+
+        /* 고객 하단탭 */
+        .c-bottom-tabs{display:flex;background:#fff;border-top:1px solid #eee;position:sticky;bottom:0;z-index:49}
+        body.dark .c-bottom-tabs{background:#16213e;border-color:#2a2a4a}
+        .c-tab{flex:1;padding:10px 0;text-align:center;font-size:12px;font-weight:700;color:#aaa;border:none;background:none;cursor:pointer;position:relative}
+        .c-tab.on{color:#667eea}
+        .c-tab-badge{position:absolute;top:2px;right:calc(50% - 16px);background:#ff4757;color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-weight:800}
+
+        .c-panel{display:none;flex:1;overflow-y:auto}
+        .c-panel.on{display:block}
+
+        @media(min-width:768px){#roleSelect h1{font-size:40px}.role-card{padding:36px 20px}.role-card .icon{font-size:60px}.role-card h2{font-size:20px}}
     </style>
 </head>
 <body>
-
 <div class="toast" id="toast"></div>
 
 <!-- 역할선택 -->
 <div id="roleSelect" class="screen active gradient-bg">
     <h1>📦 택배 배송 게임</h1>
+    <p style="color:rgba(255,255,255,.7);font-size:13px;margin-top:-14px">v3.0</p>
     <p>역할을 선택해주세요!</p>
     <div class="role-cards">
-        <div class="role-card" onclick="go('staff')">
-            <div class="icon">🚚</div>
-            <h2>택배사 직원</h2>
-            <p>택배를 접수하고 배송해요</p>
-        </div>
-        <div class="role-card" onclick="go('customer')">
-            <div class="icon">📱</div>
-            <h2>일반 고객</h2>
-            <p>내 택배 어디있지?</p>
-        </div>
+        <div class="role-card" onclick="goStaff()"><div class="icon">🚚</div><h2>택배사 직원</h2><p>택배를 접수하고 배송해요</p></div>
+        <div class="role-card" onclick="goCustomer()"><div class="icon">📱</div><h2>일반 고객</h2><p>내 택배 어디있지?</p></div>
     </div>
     <p class="online-info"><span class="online-dot"></span>실시간 멀티플레이 지원</p>
-</div>
-
-<!-- 로그인 -->
-<div id="loginScreen" class="screen gradient-bg">
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px">
-        <div class="login-box">
-            <h2 id="lT">로그인</h2>
-            <p class="sub" id="lS">간편 로그인으로 시작하세요</p>
-            <button class="login-btn" onclick="login()"><span class="li">💙</span>삼성페이로 로그인</button>
-            <button class="login-btn" onclick="login()"><span class="li">💛</span>카카오페이로 로그인</button>
-            <button class="login-btn" onclick="login()"><span class="li">🍎</span>Apple로 로그인</button>
-            <button class="login-btn" onclick="login()"><span class="li">🔵</span>Google로 로그인</button>
-        </div>
-    </div>
-    <div class="back-link" onclick="showScr('roleSelect')">← 역할 선택으로 돌아가기</div>
 </div>
 
 <!-- 택배사 선택 -->
 <div id="carrierSelect" class="screen gradient-bg">
     <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px">
-        <div class="carrier-box">
-            <h2>🏢 택배회사 선택</h2>
+        <div class="carrier-box"><h2>🏢 택배회사 선택</h2>
             <div class="carrier-grid">
                 <button class="carrier-btn" onclick="pickCarrier('CJ대한통운')"><span class="ci">📦</span>CJ대한통운</button>
                 <button class="carrier-btn" onclick="pickCarrier('한진택배')"><span class="ci">🚛</span>한진택배</button>
@@ -194,332 +338,475 @@
             </div>
         </div>
     </div>
-    <div class="back-link" onclick="showScr('loginScreen')">← 뒤로가기</div>
+    <div class="back-link" onclick="showScr('roleSelect')">← 뒤로가기</div>
 </div>
 
 <!-- 직원 메인 -->
 <div id="staffMain" class="screen">
     <div class="top-bar">
-        <h2>📦 택배관리 <span class="badge" id="cBadge"></span></h2>
-        <button class="btn-logout" onclick="showScr('roleSelect')">로그아웃</button>
-    </div>
-    <div class="tabs">
-        <button class="tab on" id="t1" onclick="tab(1)">📋 목록</button>
-        <button class="tab" id="t2" onclick="tab(2)">📝 입력</button>
-    </div>
-    <div class="panel on" id="p1">
-        <div class="list-wrap" id="wList">
-            <div class="loading"><div class="spinner"></div><p>불러오는 중...</p></div>
+        <h2>📦 <span id="cBadge" class="badge"></span> <span id="levelBadge" class="level-badge"></span> <span id="coinBadge" class="coin-badge"></span> <span id="ingBadge" class="ing-badge"></span></h2>
+        <div class="top-right">
+            <button class="btn-icon" onclick="toggleSound()" id="soundBtn">🔊</button>
+            <button class="btn-icon" onclick="toggleDark()" id="darkBtn1">🌙</button>
+            <button class="btn-logout" onclick="showScr('roleSelect')">로그아웃</button>
         </div>
     </div>
-    <div class="panel" id="p2">
-        <div class="form-wrap" id="mainArea"></div>
+    <div class="tabs">
+        <button class="tab on" id="t1" onclick="sTab(1)">📋 목록</button>
+        <button class="tab" id="t2" onclick="sTab(2)">📝 입력</button>
+        <button class="tab" id="t3" onclick="sTab(3)">💬 채팅<span class="tab-badge" id="sChatBadge" style="display:none">0</span></button>
+        <button class="tab" id="t4" onclick="sTab(4)">📊 통계</button>
+        <button class="tab" id="t5" onclick="sTab(5)">🏆 랭킹</button>
+        <button class="tab" id="t6" onclick="sTab(6)">🛒 상점</button>
     </div>
+    <div class="filter-bar" id="staffFilterBar">
+        <button class="filter-btn on" onclick="setStaffFilter('all')">전체</button>
+        <button class="filter-btn" onclick="setStaffFilter('ing')">배송중</button>
+        <button class="filter-btn" onclick="setStaffFilter('done')">배송완료</button>
+        <div class="filter-sep"></div>
+        <button class="filter-btn on" onclick="setStaffSort('new')">최신순</button>
+        <button class="filter-btn" onclick="setStaffSort('old')">오래된순</button>
+    </div>
+    <div class="panel on" id="p1"><div class="list-wrap" id="wList"></div></div>
+    <div class="panel" id="p2"><div class="form-wrap" id="mainArea"></div></div>
+    <div class="panel" id="p3"><div class="form-wrap" id="sChatArea"></div></div>
+    <div class="panel" id="p4"><div class="form-wrap" id="dashArea"></div></div>
+    <div class="panel" id="p5"><div class="form-wrap" id="rankArea"></div></div>
+    <div class="panel" id="p6"><div class="form-wrap" id="shopArea"></div></div>
 </div>
 
 <!-- 고객 메인 -->
 <div id="customerMain" class="screen">
     <div class="c-head">
         <h2>📦 택배 조회</h2>
-        <button class="btn-logout" onclick="showScr('roleSelect')">로그아웃</button>
-    </div>
-    <div class="c-body">
-        <div class="search-card fade">
-            <h2>🔍 배송 조회</h2>
-            <p>운송장 번호를 입력하세요</p>
-            <div class="search-row">
-                <input type="text" id="tInput" placeholder="운송장 번호" maxlength="15" inputmode="numeric" onkeypress="if(event.key==='Enter')track()">
-                <button class="btn btn-primary" onclick="track()">조회</button>
+        <div class="top-right">
+            <div class="notif-wrap">
+                <button class="notif-btn" onclick="toggleNotif()">🔔<span class="notif-count" id="notifCount" style="display:none">0</span></button>
+                <div class="notif-panel" id="notifPanel">
+                    <div class="notif-header"><h3>알림</h3><button class="notif-clear" onclick="clearNotifs()">모두 읽음</button></div>
+                    <div id="notifList"><div class="notif-empty">알림이 없습니다</div></div>
+                </div>
             </div>
+            <button class="btn-icon" onclick="toggleSound()" id="soundBtn2">🔊</button>
+            <button class="btn-icon" onclick="toggleDark()" id="darkBtn2">🌙</button>
+            <button class="btn-logout" onclick="showScr('roleSelect')">로그아웃</button>
         </div>
-        <div id="tResult"></div>
+    </div>
+    <!-- 고객 패널 -->
+    <div class="c-panel on" id="cp1">
+        <div class="c-body">
+            <div class="search-card fade">
+                <h2>🔍 배송 조회</h2>
+                <p>운송장 번호, 물품명, 받는분 이름으로 검색</p>
+                <div class="search-row">
+                    <input type="text" id="tInput" placeholder="검색어 입력" maxlength="30" onkeypress="if(event.key==='Enter')track()">
+                    <button class="btn btn-primary" onclick="track()">조회</button>
+                </div>
+                <div id="recentWrap"></div>
+            </div>
+            <div id="tResult"></div>
+            <div class="c-filter-bar" id="custFilterBar">
+                <button class="c-filter-btn on" onclick="setCustFilter('all')">전체</button>
+                <button class="c-filter-btn" onclick="setCustFilter('ing')">배송중</button>
+                <button class="c-filter-btn" onclick="setCustFilter('done')">배송완료</button>
+                <div class="filter-sep"></div>
+                <button class="c-filter-btn on" onclick="setCustSort('new')">최신순</button>
+                <button class="c-filter-btn" onclick="setCustSort('old')">오래된순</button>
+            </div>
+            <div id="cListArea"></div>
+        </div>
+    </div>
+    <div class="c-panel" id="cp2">
+        <div class="c-body" id="cChatArea"></div>
+    </div>
+    <!-- 하단탭 -->
+    <div class="c-bottom-tabs">
+        <button class="c-tab on" id="ct1" onclick="cTab(1)">📦 조회</button>
+        <button class="c-tab" id="ct2" onclick="cTab(2)">💬 채팅<span class="c-tab-badge" id="cChatBadge" style="display:none">0</span></button>
     </div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-// ========== Firebase 초기화 ==========
-const firebaseConfig = {
-    apiKey: "AIzaSyASiZJwKTgR5eIEwnZ6NebiwpzB_PGw1WU",
-    authDomain: "abcd-c0ead.firebaseapp.com",
-    databaseURL: "https://abcd-c0ead-default-rtdb.firebaseio.com",
-    projectId: "abcd-c0ead",
-    storageBucket: "abcd-c0ead.firebasestorage.app",
-    messagingSenderId: "1065808686638",
-    appId: "1:1065808686638:web:e36f122d059a8d788b79bf"
-};
+const firebaseConfig={apiKey:"AIzaSyASiZJwKTgR5eIEwnZ6NebiwpzB_PGw1WU",authDomain:"abcd-c0ead.firebaseapp.com",databaseURL:"https://abcd-c0ead-default-rtdb.firebaseio.com",projectId:"abcd-c0ead",storageBucket:"abcd-c0ead.firebasestorage.app",messagingSenderId:"1065808686638",appId:"1:1065808686638:web:e36f122d059a8d788b79bf"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const wbRef = db.ref('waybills');
+const db=firebase.database(),wbRef=db.ref('waybills'),chatRef=db.ref('chats'),rankRef=db.ref('rankings');
 
-// ========== 데이터 ==========
-let role='', carrier='', wb={}, currentView='';
+let role='',carrier='',wb={},currentView='',customerTrackingNum='';
+let myExp=0,myLevel=1,myCoins=0,myDeliveries=0;
+let missionTimer=null,missionTimeLeft=0,missionActive=false,missionWb='';
+let ownedSkins=['🚚'],equippedSkin='🚚';
+let prevWbKeys=[],prevWbSnap={};
+let notifications=[],notifUnread=0;
+let staffFilter='all',staffSort='new',custFilter='all',custSort='new';
+let soundOn=true;
+let chatData={},prevChatData={},sChatUnread=0,cChatUnread=0;
+let openChatRoom='';// 현재 열려있는 채팅방
 
-const ST=[
-    {n:'상품 접수',i:'📋',d:'택배 접수가 완료되었습니다'},
-    {n:'집하 완료',i:'📦',d:'물류센터에서 상품을 수거했습니다'},
-    {n:'지역 물류센터 도착',i:'🏭',d:'지역 물류센터에 도착했습니다'},
-    {n:'배송지 도착',i:'🏬',d:'배송지 근처 센터에 도착했습니다'},
-    {n:'배송 출발',i:'🚚',d:'배송 기사님이 출발했습니다'},
-    {n:'배송 중',i:'📍',d:'고객님께 배달 중입니다'},
-    {n:'배송 완료',i:'✅',d:'배송이 완료되었습니다'}
-];
+const ST=[{n:'상품 접수',i:'📋',d:'택배 접수가 완료되었습니다'},{n:'집하 완료',i:'📦',d:'물류센터에서 상품을 수거했습니다'},{n:'지역 물류센터 도착',i:'🏭',d:'지역 물류센터에 도착했습니다'},{n:'배송지 도착',i:'🏬',d:'배송지 근처 센터에 도착했습니다'},{n:'배송 출발',i:'🚚',d:'배송 기사님이 출발했습니다'},{n:'배송 중',i:'📍',d:'고객님께 배달 중입니다'},{n:'배송 완료',i:'✅',d:'배송이 완료되었습니다'}];
 const ITEMS=['운동화','장난감 로봇','그림책 세트','과자 선물세트','블록 장난감','인형','티셔츠','텀블러','이어폰','쿠키 세트','색연필 세트','퍼즐','보드게임','축구공','가방','모자'];
 const NAMES=['김민준','이서연','박지호','최수아','정도윤','강하은','조시우','윤지아','장예준','한소율','임건우','오나윤'];
 const CITY=['서울','부산','대구','인천','광주','대전','울산','수원','고양','용인','성남','청주','천안'];
 const ROAD=['한빛로','행복길','미래로','푸른길','별빛로','꿈나무길','사랑로','희망길','햇살길'];
+const EVENTS=[{title:'🌧️ 폭우 경보!',desc:'폭우가 쏟아지고 있습니다!',good:'빠르게 배송! (+50코인)',bad:'대기 (시간 지연)',goodR:{coins:50,time:0},badR:{coins:0,time:10}},{title:'🚗 교통 체증!',desc:'도로가 막히고 있어요!',good:'우회 이동 (+30코인)',bad:'대기 (시간 지연)',goodR:{coins:30,time:0},badR:{coins:0,time:15}},{title:'🏠 고객 부재!',desc:'고객님이 안 계십니다!',good:'문 앞 배송 (+20코인)',bad:'재배달 (시간 지연)',goodR:{coins:20,time:0},badR:{coins:0,time:20}},{title:'📦 파손 위험!',desc:'상자가 찌그러졌어요!',good:'조심히 배송 (+40코인)',bad:'무시 (-20코인)',goodR:{coins:40,time:0},badR:{coins:-20,time:0}},{title:'🎁 보너스 배송!',desc:'특급 보너스!',good:'즉시 출발! (+80코인)',bad:'천천히 (+10코인)',goodR:{coins:80,time:0},badR:{coins:10,time:0}},{title:'🐕 강아지!',desc:'배송지 앞에 강아지!',good:'간식 주기 (+30코인)',bad:'돌아가기 (시간 지연)',goodR:{coins:30,time:0},badR:{coins:0,time:8}}];
+const ITEM_TYPES=[{type:'normal',label:'일반',tag:''},{type:'frozen',label:'냉동',tag:'<span class="special-tag tag-frozen">🧊 냉동</span>',timeLimit:45},{type:'fragile',label:'파손주의',tag:'<span class="special-tag tag-fragile">⚠️ 파손주의</span>',needMinigame:true},{type:'express',label:'특급',tag:'<span class="special-tag tag-express">⚡ 특급</span>',timeLimit:30}];
+const LEVEL_NAMES=['수습 배송원','초보 배송원','일반 배송원','숙련 배송원','베테랑 기사','에이스 기사','마스터 기사','전설의 기사','택배 황제','택배의 신'];
+const LEVEL_EXP=[0,100,250,500,900,1500,2500,4000,6500,10000];
+const SHOP_ITEMS=[{name:'기본 트럭',icon:'🚚',price:0},{name:'스포츠카',icon:'🏎️',price:200},{name:'오토바이',icon:'🏍️',price:150},{name:'자전거',icon:'🚲',price:80},{name:'로켓',icon:'🚀',price:500},{name:'헬리콥터',icon:'🚁',price:400},{name:'유니콘',icon:'🦄',price:800},{name:'UFO',icon:'🛸',price:1000},{name:'소방차',icon:'🚒',price:300},{name:'경찰차',icon:'🚓',price:350}];
+const CITY_POS={'서울':{x:48,y:18},'부산':{x:78,y:82},'대구':{x:70,y:62},'인천':{x:38,y:22},'광주':{x:35,y:72},'대전':{x:52,y:48},'울산':{x:82,y:68},'수원':{x:46,y:30},'고양':{x:44,y:15},'용인':{x:52,y:34},'성남':{x:50,y:28},'청주':{x:54,y:40},'천안':{x:48,y:38}};
+const GRAPH_COLORS=['purple','green','orange','pink','blue'];
 
 function pk(a){return a[Math.floor(Math.random()*a.length)]}
-function rAddr(){return pk(CITY)+' '+pk(ROAD)+' '+Math.floor(Math.random()*200+1)+'번길 '+Math.floor(Math.random()*50+1)+'호'}
+function rItemType(){const r=Math.random();if(r<.15)return ITEM_TYPES[1];if(r<.3)return ITEM_TYPES[2];if(r<.45)return ITEM_TYPES[3];return ITEM_TYPES[0];}
+function timeAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'초 전';const m=Math.floor(s/60);if(m<60)return m+'분 전';const h=Math.floor(m/60);if(h<24)return h+'시간 전';return Math.floor(h/24)+'일 전';}
 
-// ========== 토스트 알림 ==========
-function toast(msg){
-    const el=document.getElementById('toast');
-    el.textContent=msg;
-    el.classList.add('show');
-    setTimeout(()=>el.classList.remove('show'),2500);
-}
+// 사운드
+const AudioCtx=window.AudioContext||window.webkitAudioContext;let audioCtx;
+function initAudio(){if(!audioCtx)audioCtx=new AudioCtx();}
+function playSound(type){if(!soundOn)return;try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);g.gain.value=.1;if(type==='click'){o.frequency.value=800;o.type='sine';g.gain.setValueAtTime(.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.1);o.start();o.stop(audioCtx.currentTime+.1);}else if(type==='success'){o.frequency.value=523;o.type='sine';g.gain.setValueAtTime(.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.start();o.stop(audioCtx.currentTime+.3);setTimeout(()=>{const o2=audioCtx.createOscillator(),g2=audioCtx.createGain();o2.connect(g2);g2.connect(audioCtx.destination);o2.frequency.value=659;o2.type='sine';g2.gain.setValueAtTime(.1,audioCtx.currentTime);g2.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o2.start();o2.stop(audioCtx.currentTime+.3);},150);setTimeout(()=>{const o3=audioCtx.createOscillator(),g3=audioCtx.createGain();o3.connect(g3);g3.connect(audioCtx.destination);o3.frequency.value=784;o3.type='sine';g3.gain.setValueAtTime(.12,audioCtx.currentTime);g3.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.5);o3.start();o3.stop(audioCtx.currentTime+.5);},300);}else if(type==='levelup'){[523,659,784,1047].forEach((f,i)=>{setTimeout(()=>{const oo=audioCtx.createOscillator(),gg=audioCtx.createGain();oo.connect(gg);gg.connect(audioCtx.destination);oo.frequency.value=f;oo.type='triangle';gg.gain.setValueAtTime(.12,audioCtx.currentTime);gg.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.4);oo.start();oo.stop(audioCtx.currentTime+.4);},i*120);});}else if(type==='coin'){o.frequency.value=1200;o.type='sine';g.gain.setValueAtTime(.08,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.15);o.start();o.stop(audioCtx.currentTime+.15);}else if(type==='alert'){o.frequency.value=400;o.type='sawtooth';g.gain.setValueAtTime(.08,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.start();o.stop(audioCtx.currentTime+.3);}else if(type==='notify'){o.frequency.value=880;o.type='sine';g.gain.setValueAtTime(.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.2);o.start();o.stop(audioCtx.currentTime+.2);}}catch(e){}}
+function vibrate(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
 
-// ========== 화면 전환 ==========
-function showScr(id){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
+function toggleSound(){soundOn=!soundOn;document.querySelectorAll('#soundBtn,#soundBtn2').forEach(b=>b.textContent=soundOn?'🔊':'🔇');}
 
-// ========== 실시간 데이터 리스너 ==========
-wbRef.on('value', snap => {
-    wb = snap.val() || {};
-    renderList();
-    // 현재 상세 보고있는 운송장이 있으면 자동 갱신
-    if(currentView && wb[currentView]){
-        openDetail(currentView, true);
+function confetti(){const c=document.createElement('div');c.className='confetti-container';document.body.appendChild(c);const cols=['#667eea','#764ba2','#f093fb','#f5576c','#43a047','#ffd700','#ff6b6b','#fda085','#38ef7d'];for(let i=0;i<80;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.width=(Math.random()*8+6)+'px';p.style.height=(Math.random()*8+6)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animationDelay=Math.random()*2+'s';p.style.animationDuration=(Math.random()*2+2)+'s';c.appendChild(p);}setTimeout(()=>c.remove(),4000);}
+
+function toggleDark(){document.body.classList.toggle('dark');const d=document.body.classList.contains('dark');document.querySelectorAll('#darkBtn1,#darkBtn2').forEach(b=>b.textContent=d?'☀️':'🌙');localStorage.setItem('darkMode',d);}
+if(localStorage.getItem('darkMode')==='true')document.body.classList.add('dark');
+document.addEventListener('DOMContentLoaded',()=>{if(document.body.classList.contains('dark'))document.querySelectorAll('#darkBtn1,#darkBtn2').forEach(b=>b.textContent='☀️');});
+
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}
+function showScr(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// 알림
+function addNotif(icon,text,wbNum){notifications.unshift({icon,text,wbNum,time:Date.now(),read:false});if(notifications.length>50)notifications.pop();notifUnread++;updateNotifBadge();renderNotifList();}
+function updateNotifBadge(){const el=document.getElementById('notifCount');if(notifUnread>0){el.style.display='inline';el.textContent=notifUnread>99?'99+':notifUnread;}else el.style.display='none';}
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open');}
+function clearNotifs(){notifications.forEach(n=>n.read=true);notifUnread=0;updateNotifBadge();renderNotifList();}
+function renderNotifList(){const el=document.getElementById('notifList');if(!notifications.length){el.innerHTML='<div class="notif-empty">알림이 없습니다</div>';return;}el.innerHTML=notifications.map((n,i)=>`<div class="notif-item ${n.read?'':'unread'}" onclick="notifClick(${i})"><span style="margin-right:6px">${n.icon}</span><span class="ni-text">${n.text}</span><div class="ni-time">${timeAgo(n.time)}</div></div>`).join('');}
+function notifClick(idx){const n=notifications[idx];if(!n.read){n.read=true;notifUnread=Math.max(0,notifUnread-1);updateNotifBadge();renderNotifList();}document.getElementById('notifPanel').classList.remove('open');if(n.wbNum&&wb[n.wbNum]){cTab(1);trackDirect(n.wbNum);}}
+document.addEventListener('click',e=>{const w=document.querySelector('.notif-wrap');if(w&&!w.contains(e.target))document.getElementById('notifPanel').classList.remove('open');});
+
+// 실시간
+wbRef.on('value',snap=>{
+    const nw=snap.val()||{},nk=Object.keys(nw);
+    if(role==='customer'&&prevWbKeys.length>0){
+        nk.filter(k=>!prevWbKeys.includes(k)).forEach(k=>{playSound('notify');vibrate(100);toast('📦 새 택배! '+k);addNotif('📦','새 택배: '+k+' ('+nw[k].item+')',k);});
+        nk.forEach(k=>{if(prevWbSnap[k]&&nw[k]&&prevWbSnap[k].cs!==nw[k].cs){playSound('notify');vibrate(80);toast(ST[nw[k].cs].i+' '+k+' → '+ST[nw[k].cs].n);addNotif(ST[nw[k].cs].i,k+' → '+ST[nw[k].cs].n,k);}});
     }
+    prevWbKeys=nk;prevWbSnap=JSON.parse(JSON.stringify(nw));wb=nw;
+    if(role==='staff'){renderList();updateIngBadge();}
+    if(role==='customer')renderCustomerList();
+    if(currentView&&wb[currentView]&&role==='staff')openDetail(currentView,true);
+    if(customerTrackingNum&&wb[customerTrackingNum])renderTracking(customerTrackingNum,wb[customerTrackingNum],document.getElementById('tResult'));
 });
 
-// ========== 역할선택 ==========
-function go(r){
-    role=r;
-    document.getElementById('lT').textContent=r==='staff'?'택배사 직원 로그인':'고객 로그인';
-    document.getElementById('lS').textContent=r==='staff'?'직원 계정으로 로그인하세요':'택배 조회를 위해 로그인하세요';
-    showScr('loginScreen');
-}
-
-// 로그인
-function login(){
-    if(role==='staff') showScr('carrierSelect');
-    else showScr('customerMain');
-}
-
-// 택배사
-function pickCarrier(c){
-    carrier=c;
-    document.getElementById('cBadge').textContent=c;
-    showScr('staffMain');
-    renderList();
-    showForm();
-}
-
-// 탭
-function tab(n){
-    document.getElementById('t1').classList.toggle('on',n===1);
-    document.getElementById('t2').classList.toggle('on',n===2);
-    document.getElementById('p1').classList.toggle('on',n===1);
-    document.getElementById('p2').classList.toggle('on',n===2);
-}
-
-// ========== 목록 ==========
-function renderList(){
-    const el=document.getElementById('wList');
-    const keys=Object.keys(wb);
-    if(!keys.length){
-        el.innerHTML='<div class="empty-msg"><div class="ei">📭</div><p>등록된 운송장이 없어요<br><span style="font-size:12px;color:#ddd">입력 탭에서 등록해주세요</span></p></div>';
-        return;
+// 채팅 실시간
+chatRef.on('value',snap=>{
+    const nd=snap.val()||{};
+    // 새 메시지 감지
+    if(Object.keys(prevChatData).length>0){
+        Object.keys(nd).forEach(num=>{
+            const newMsgs=nd[num]||{},oldMsgs=prevChatData[num]||{};
+            const newKeys=Object.keys(newMsgs).filter(k=>!oldMsgs[k]);
+            newKeys.forEach(k=>{
+                const m=newMsgs[k];
+                if(role==='staff'&&m.role==='customer'&&openChatRoom!==num){sChatUnread++;updateSChatBadge();}
+                if(role==='customer'&&m.role==='staff'&&openChatRoom!==num){cChatUnread++;updateCChatBadge();addNotif('💬','택배원 메시지: '+m.text,num);}
+            });
+        });
     }
-    el.innerHTML=keys.slice().reverse().map(k=>{
-        const w=wb[k],s=w.cs;
-        return `<div class="wb-card" onclick="openDetail('${k}')">
-            <div class="num">${k}</div>
-            <div class="meta">${w.item} · ${w.wt}</div>
-            <span class="st s${s}">${ST[s].i} ${ST[s].n}</span>
-        </div>`;
-    }).join('');
+    prevChatData=JSON.parse(JSON.stringify(nd));chatData=nd;
+    if(role==='staff')renderStaffChatList();
+    if(role==='customer')renderCustChatList();
+    // 열려있는 채팅방 갱신
+    if(openChatRoom)renderChatMessages(openChatRoom);
+});
+
+function updateSChatBadge(){const el=document.getElementById('sChatBadge');if(sChatUnread>0){el.style.display='inline';el.textContent=sChatUnread;}else el.style.display='none';}
+function updateCChatBadge(){const el=document.getElementById('cChatBadge');if(cChatUnread>0){el.style.display='inline';el.textContent=cChatUnread;}else el.style.display='none';}
+
+function goStaff(){role='staff';loadUserData();showScr('carrierSelect');}
+function goCustomer(){role='customer';prevWbKeys=Object.keys(wb);prevWbSnap=JSON.parse(JSON.stringify(wb));prevChatData=JSON.parse(JSON.stringify(chatData));notifications=[];notifUnread=0;cChatUnread=0;updateNotifBadge();renderNotifList();updateCChatBadge();loadRecentSearches();showScr('customerMain');renderCustomerList();renderCustChatList();}
+
+function pickCarrier(c){carrier=c;document.getElementById('cBadge').textContent=c;playSound('click');prevChatData=JSON.parse(JSON.stringify(chatData));sChatUnread=0;updateSChatBadge();showScr('staffMain');updateTopBar();updateIngBadge();renderList();showForm();renderDashboard();renderRankings();renderShop();renderStaffChatList();}
+
+function sTab(n){for(let i=1;i<=6;i++){document.getElementById('t'+i).classList.toggle('on',i===n);document.getElementById('p'+i).classList.toggle('on',i===n);}document.getElementById('staffFilterBar').style.display=n===1?'flex':'none';if(n===3){sChatUnread=0;updateSChatBadge();renderStaffChatList();}if(n===4)renderDashboard();if(n===5)renderRankings();if(n===6)renderShop();}
+function cTab(n){document.getElementById('ct1').classList.toggle('on',n===1);document.getElementById('ct2').classList.toggle('on',n===2);document.getElementById('cp1').classList.toggle('on',n===1);document.getElementById('cp2').classList.toggle('on',n===2);if(n===2){cChatUnread=0;updateCChatBadge();renderCustChatList();}}
+
+function loadUserData(){const s=localStorage.getItem('deliveryGame_staff');if(s){const d=JSON.parse(s);myExp=d.exp||0;myLevel=d.level||1;myCoins=d.coins||0;myDeliveries=d.deliveries||0;ownedSkins=d.ownedSkins||['🚚'];equippedSkin=d.equippedSkin||'🚚';}updateTopBar();}
+function saveUserData(){localStorage.setItem('deliveryGame_staff',JSON.stringify({exp:myExp,level:myLevel,coins:myCoins,deliveries:myDeliveries,ownedSkins,equippedSkin}));rankRef.child('staff').set({name:'택배원',deliveries:myDeliveries,exp:myExp,level:myLevel,carrier});}
+function addExp(a){myExp+=a;const ol=myLevel;for(let i=LEVEL_EXP.length-1;i>=0;i--)if(myExp>=LEVEL_EXP[i]){myLevel=i+1;break;}if(myLevel>ol){playSound('levelup');vibrate([100,50,100,50,200]);confetti();toast('🎉 레벨 업! Lv.'+myLevel+' '+LEVEL_NAMES[myLevel-1]);}updateTopBar();saveUserData();}
+function addCoins(a){myCoins+=a;if(a>0)playSound('coin');updateTopBar();saveUserData();}
+function updateTopBar(){document.getElementById('levelBadge').textContent='Lv.'+myLevel+' '+LEVEL_NAMES[Math.min(myLevel-1,LEVEL_NAMES.length-1)];document.getElementById('coinBadge').textContent='💰'+myCoins;}
+function updateIngBadge(){const cnt=Object.keys(wb).filter(k=>wb[k].cs<6).length;document.getElementById('ingBadge').textContent='배송중 '+cnt+'건';}
+function getExpPct(){const n=LEVEL_EXP[Math.min(myLevel,LEVEL_EXP.length-1)],p=LEVEL_EXP[Math.min(myLevel-1,LEVEL_EXP.length-1)];return Math.min(100,((myExp-p)/(n-p))*100);}
+function getNextExp(){return Math.max(0,LEVEL_EXP[Math.min(myLevel,LEVEL_EXP.length-1)]-myExp);}
+
+// 필터
+function setStaffFilter(f){staffFilter=f;document.querySelectorAll('#staffFilterBar .filter-btn').forEach((b,i)=>{if(i<3)b.classList.toggle('on',['전체','배송중','배송완료'][i]==={all:'전체',ing:'배송중',done:'배송완료'}[f]);});renderList();}
+function setStaffSort(s){staffSort=s;document.querySelectorAll('#staffFilterBar .filter-btn').forEach((b,i)=>{if(i>=4)b.classList.toggle('on',['최신순','오래된순'][i-4]==={new:'최신순',old:'오래된순'}[s]);});renderList();}
+function setCustFilter(f){custFilter=f;document.querySelectorAll('#custFilterBar .c-filter-btn').forEach((b,i)=>{if(i<3)b.classList.toggle('on',['전체','배송중','배송완료'][i]==={all:'전체',ing:'배송중',done:'배송완료'}[f]);});renderCustomerList();}
+function setCustSort(s){custSort=s;document.querySelectorAll('#custFilterBar .c-filter-btn').forEach((b,i)=>{if(i>=4)b.classList.toggle('on',['최신순','오래된순'][i-4]==={new:'최신순',old:'오래된순'}[s]);});renderCustomerList();}
+function filterSort(keys,f,s){let r=keys;if(f==='ing')r=keys.filter(k=>wb[k].cs<6);else if(f==='done')r=keys.filter(k=>wb[k].cs>=6);r.sort((a,b)=>{const ta=wb[a].startTime||0,tb=wb[b].startTime||0;return s==='new'?tb-ta:ta-tb;});return r;}
+
+function renderList(){
+    const el=document.getElementById('wList');let keys=Object.keys(wb);
+    if(!keys.length){el.innerHTML='<div class="empty-msg"><div class="ei">📭</div><p>등록된 운송장이 없어요</p></div>';return;}
+    keys=filterSort(keys,staffFilter,staffSort);
+    if(!keys.length){el.innerHTML='<div class="empty-msg"><div class="ei">🔍</div><p>조건에 맞는 운송장이 없어요</p></div>';return;}
+    el.innerHTML=keys.map(k=>{const w=wb[k],s=w.cs,ti=ITEM_TYPES.find(t=>t.type===w.itemType)||ITEM_TYPES[0];return `<div class="wb-card" onclick="openDetail('${k}')"><div class="num">${equippedSkin} ${k} ${ti.tag}</div><div class="meta">${w.item} · ${w.wt} · ${w.cr}</div><span class="st s${s}">${ST[s].i} ${ST[s].n}</span></div>`;}).join('');
 }
 
-// ========== 입력폼 ==========
 function showForm(){
     currentView='';
-    document.getElementById('mainArea').innerHTML=`
-        <div class="card fade">
-            <h3>📝 운송장 번호 입력</h3>
-            <p class="desc">새 택배를 등록하려면 운송장 번호를 입력하세요</p>
-            <div class="row">
-                <input type="text" id="wInput" placeholder="운송장 번호 입력" maxlength="15" inputmode="numeric" onkeypress="if(event.key==='Enter')reg()">
-                <button class="btn btn-primary" onclick="reg()">등록</button>
-            </div>
-        </div>`;
+    document.getElementById('mainArea').innerHTML=`<div class="card fade"><h3>📝 운송장 번호 입력</h3><p class="desc">새 택배를 등록하세요</p><div class="row"><input type="text" id="wInput" placeholder="운송장 번호" maxlength="15" inputmode="numeric" onkeypress="if(event.key==='Enter')reg()"><button class="btn btn-primary" onclick="reg()">등록</button></div></div>
+    <div class="card"><h3>${equippedSkin} 내 정보</h3><div class="info-grid"><div class="ig"><label>레벨</label><span>Lv.${myLevel} ${LEVEL_NAMES[Math.min(myLevel-1,LEVEL_NAMES.length-1)]}</span></div><div class="ig"><label>코인</label><span>💰${myCoins}</span></div><div class="ig"><label>총 배송</label><span>📦${myDeliveries}건</span></div><div class="ig"><label>경험치</label><span>⭐${myExp}</span></div></div><div class="exp-bar-wrap"><div class="exp-bar-fill" style="width:${getExpPct()}%"></div></div><p style="font-size:11px;color:#aaa;text-align:center;margin-top:4px">다음 레벨까지 ${getNextExp()} EXP</p></div>`;
 }
 
-// ========== 등록 (Firebase에 저장) ==========
 function reg(){
-    const inp=document.getElementById('wInput');
-    const num=inp.value.trim();
+    const inp=document.getElementById('wInput'),num=inp.value.trim();
     if(!num){inp.style.borderColor='#ff4757';setTimeout(()=>inp.style.borderColor='#e8e8e8',800);return;}
-    if(wb[num]){alert('이미 등록된 번호입니다!');return;}
+    if(wb[num]){alert('이미 등록된 번호!');return;}
+    const it=rItemType(),fc=pk(CITY),tc=pk(CITY.filter(c=>c!==fc));
+    const data={item:pk(ITEMS),wt:(Math.random()*9+.5).toFixed(1)+'kg',from:pk(NAMES),fa:fc+' '+pk(ROAD)+' '+Math.floor(Math.random()*200+1)+'번길',to:pk(NAMES),ta:tc+' '+pk(ROAD)+' '+Math.floor(Math.random()*50+1)+'호',fromCity:fc,toCity:tc,cr:carrier,cs:0,times:{0:new Date().toLocaleString('ko-KR')},date:new Date().toLocaleString('ko-KR'),itemType:it.type,rating:0,review:'',memo:'',startTime:Date.now()};
+    playSound('success');vibrate(100);
+    wbRef.child(num).set(data).then(()=>{toast('📦 '+num+' 등록!');inp.value='';addExp(10);addCoins(5);if(it.timeLimit)startMission(num,it.timeLimit);openDetail(num);}).catch(err=>alert('실패: '+err.message));
+}
 
-    const data={
-        item:pk(ITEMS), wt:(Math.random()*9+0.5).toFixed(1)+'kg',
-        from:pk(NAMES), fa:rAddr(),
-        to:pk(NAMES), ta:rAddr(),
-        cr:carrier, cs:0,
-        times:{0:new Date().toLocaleString('ko-KR')},
-        date:new Date().toLocaleString('ko-KR')
-    };
+function deleteWb(num){if(!confirm('운송장 '+num+'을 삭제하시겠습니까?'))return;wbRef.child(num).remove().then(()=>{chatRef.child(num).remove();toast('🗑️ '+num+' 삭제됨');playSound('click');showForm();}).catch(err=>alert('삭제 실패'));}
 
-    // Firebase에 저장
-    wbRef.child(num).set(data).then(()=>{
-        toast('📦 운송장 '+num+' 등록 완료!');
-        inp.value='';
-        openDetail(num);
-    }).catch(err=>{
-        alert('저장 실패: '+err.message);
+function startMission(num,sec){if(missionTimer)clearInterval(missionTimer);missionActive=true;missionWb=num;missionTimeLeft=sec;toast('⏰ 미션! '+sec+'초!');playSound('alert');missionTimer=setInterval(()=>{missionTimeLeft--;if(missionTimeLeft<=0){clearInterval(missionTimer);missionActive=false;toast('⏰ 시간 초과!');playSound('alert');}if(currentView===num)openDetail(num,true);},1000);}
+
+function renderMap(fc,tc,prog){
+    const fp=CITY_POS[fc]||{x:50,y:50},tp=CITY_POS[tc]||{x:50,y:50};
+    const cx=fp.x+(tp.x-fp.x)*prog/6,cy=fp.y+(tp.y-fp.y)*prog/6;
+    const isDark=document.body.classList.contains('dark');
+    const bg=isDark?'#0a1628':'#e8f4fd',land=isDark?'#1a3a2a':'#c8e6c9',stroke=isDark?'#2d5a3d':'#81c784',txtC=isDark?'#aaa':'#333';
+    return `<div class="map-box"><svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <rect width="100" height="100" fill="${bg}" rx="4"/>
+        <path d="M40,8 C38,12 35,18 36,25 C34,30 38,35 40,40 C42,45 48,50 50,55 C48,60 42,65 38,70 C35,75 33,80 35,85 C38,88 42,86 45,82 C48,78 52,75 55,70 C58,65 62,60 65,55 C68,50 72,45 75,40 C78,35 80,30 78,25 C75,20 70,18 65,15 C60,12 55,10 50,8 C45,7 42,7 40,8Z" fill="${land}" stroke="${stroke}" stroke-width="0.5"/>
+        <line x1="${fp.x}" y1="${fp.y}" x2="${tp.x}" y2="${tp.y}" stroke="#667eea" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
+        <circle cx="${fp.x}" cy="${fp.y}" r="2.5" fill="#43a047"/><text x="${fp.x}" y="${fp.y-4}" text-anchor="middle" font-size="3" fill="${txtC}" font-weight="bold">${fc}</text>
+        <circle cx="${tp.x}" cy="${tp.y}" r="2.5" fill="#e91e63"/><text x="${tp.x}" y="${tp.y-4}" text-anchor="middle" font-size="3" fill="${txtC}" font-weight="bold">${tc}</text>
+        <text x="${cx}" y="${cy}" text-anchor="middle" font-size="5" dominant-baseline="central">${equippedSkin}</text>
+    </svg></div>`;
+}
+
+function openDetail(num,silent){
+    sTab(2);currentView=num;const w=wb[num];if(!w)return;
+    if(!silent){playSound('click');toast('📋 '+num);}
+    const ti=ITEM_TYPES.find(t=>t.type===w.itemType)||ITEM_TYPES[0];
+    let sh='';for(let i=0;i<ST.length;i++){const s=ST[i];let dc='',cc='',tm='';if(i<w.cs){dc='done';cc='done';tm=w.times[i]||'';}else if(i===w.cs){dc='now';tm=w.times[i]||'';}sh+=`<div class="step"><div class="sl"><div class="dot ${dc}">${i<w.cs?'✓':s.i}</div>${i<ST.length-1?`<div class="conn ${cc}"></div>`:''}</div><div class="sc"><div class="t">${s.n}</div>${tm?`<div class="tm">${tm}</div>`:''}${i<=w.cs?`<div class="ds">${s.d}</div>`:''}</div></div>`;}
+    const done=w.cs>=6,nx=!done&&ST[w.cs+1];
+    let miss='';if(missionActive&&missionWb===num)miss=`<div class="mission-bar" ${missionTimeLeft<=10?'style="background:#ff4757"':''}><span>⏰ 미션!</span><span class="timer">${missionTimeLeft}초</span></div>`;
+    let map=w.fromCity&&w.toCity?renderMap(w.fromCity,w.toCity,w.cs):'';
+    let memo='';if(w.memo)memo=`<div class="memo-box"><label>📝 고객 요청사항</label><p>${w.memo}</p></div>`;
+    let rev='';if(done&&w.rating)rev=`<div class="card" style="margin-top:14px;text-align:center"><h3>⭐ 고객 평가</h3><div style="font-size:28px;margin:8px 0">${'⭐'.repeat(w.rating)}${'☆'.repeat(5-w.rating)}</div>${w.review?`<p style="font-size:13px;color:#666;font-style:italic">"${w.review}"</p>`:''}</div>`;
+    let qr=`<div class="qr-box"><p style="font-size:13px;font-weight:700;margin-bottom:8px">📱 QR</p><canvas id="qrCanvas" width="120" height="120" class="qr-canvas"></canvas></div>`;
+    let chat=`<div style="margin-top:14px"><p style="font-size:14px;font-weight:700;margin-bottom:8px">💬 고객과 소통</p><div class="chat-box" id="chatBox_s_${num}"></div><div class="chat-input-row"><input type="text" id="chatIn_s_${num}" placeholder="메시지..." maxlength="100" onkeypress="if(event.key==='Enter')sendMsg('${num}','staff')"><button class="btn btn-primary" onclick="sendMsg('${num}','staff')" style="padding:10px 16px;font-size:13px">전송</button></div></div>`;
+    document.getElementById('mainArea').innerHTML=`<div class="card fade">
+        <div class="d-head"><h3>${equippedSkin} ${num} ${ti.tag}</h3><div><button class="btn-sm" onclick="showForm()">+ 새 운송장</button> <button class="btn-del" onclick="deleteWb('${num}')">🗑️ 삭제</button></div></div>
+        ${miss}${map}${memo}
+        <div class="info-grid">
+            <div class="ig"><label>물품명</label><span>${w.item}</span></div><div class="ig"><label>무게</label><span>${w.wt}</span></div>
+            <div class="ig"><label>보내는 분</label><span>${w.from}</span></div><div class="ig full"><label>보내는 주소</label><span>${w.fa}</span></div>
+            <div class="ig"><label>받는 분</label><span>${w.to}</span></div><div class="ig full"><label>받는 주소</label><span>${w.ta}</span></div>
+            <div class="ig"><label>택배사</label><span>${w.cr}</span></div><div class="ig"><label>접수일시</label><span>${w.date}</span></div>
+            <div class="ig"><label>물품유형</label><span>${ti.label}</span></div>
+        </div>
+        <div class="steps-title">📍 배송 현황</div>${sh}
+        ${done?'<div class="done-badge">🎉 배송 완료!</div>':`<button class="btn-next" onclick="tryNext('${num}')">${nx.i} 다음: ${nx.n}</button>`}
+        ${qr}${chat}
+    </div>${rev}`;
+    setTimeout(()=>drawQR(num),100);
+    loadChatRoom('s_',num);
+}
+
+function tryNext(num){const w=wb[num];if(!w)return;if(w.itemType==='fragile'&&w.cs>=3&&w.cs<=5&&!w.minigameDone){showMinigame(num);return;}if(Math.random()<.3&&w.cs>0&&w.cs<5){showEvent(num);return;}doNext(num);}
+function doNext(num){
+    const w=wb[num];if(!w||w.cs>=6)return;const ns=w.cs+1,u={};u['cs']=ns;u['times/'+ns]=new Date().toLocaleString('ko-KR');
+    let exp=15+ns*5,coin=10+ns*3;
+    if(missionActive&&missionWb===num&&missionTimeLeft>0){coin+=Math.floor(missionTimeLeft*2);exp+=missionTimeLeft;}
+    if(w.itemType==='express')coin+=10;
+    if(ns>=6){u['completedAt']=Date.now();myDeliveries++;exp+=50;coin+=30;if(missionActive&&missionWb===num){clearInterval(missionTimer);missionActive=false;}}
+    wbRef.child(num).update(u).then(()=>{playSound(ns>=6?'success':'click');vibrate(ns>=6?[100,50,100,50,200]:80);toast(ST[ns].i+' '+ST[ns].n);addExp(exp);addCoins(coin);if(ns>=6){confetti();toast('🎉 완료! +'+coin+'코인');}});
+}
+
+function showEvent(num){const e=pk(EVENTS);playSound('alert');vibrate([100,50,100]);const o=document.createElement('div');o.className='modal-overlay';o.innerHTML=`<div class="modal-box fade"><h2>${e.title}</h2><p>${e.desc}</p><div class="modal-btns"><button class="modal-btn good" onclick="resolveEv(this,'${num}',${e.goodR.coins},${e.goodR.time})">${e.good}</button><button class="modal-btn bad" onclick="resolveEv(this,'${num}',${e.badR.coins},${e.badR.time})">${e.bad}</button></div></div>`;document.body.appendChild(o);}
+function resolveEv(btn,num,coins,tp){btn.closest('.modal-overlay').remove();if(coins>0){addCoins(coins);toast('💰+'+coins);}else if(coins<0){addCoins(coins);toast('💸'+coins);}if(tp>0&&missionActive){missionTimeLeft=Math.max(0,missionTimeLeft-tp);toast('⏰-'+tp+'초');}playSound(coins>=0?'success':'alert');doNext(num);}
+
+function showMinigame(num){
+    playSound('alert');const o=document.createElement('div');o.className='modal-overlay';o.id='mgOverlay';
+    o.innerHTML=`<div class="modal-box fade"><h2>⚠️ 파손주의!</h2><p>초록 안에 공을 유지하세요!</p><div style="padding:20px"><div class="balance-bar"><div class="balance-zone" style="left:35%;width:30%"></div><div class="balance-indicator" id="balInd" style="left:50%"></div></div><div style="display:flex;gap:10px;justify-content:center;margin-top:12px"><button class="btn btn-primary" onmousedown="mgM(-1)" ontouchstart="mgM(-1)" style="padding:14px 28px;font-size:20px">⬅️</button><button class="btn btn-primary" onmousedown="mgM(1)" ontouchstart="mgM(1)" style="padding:14px 28px;font-size:20px">➡️</button></div><p style="margin-top:8px;font-weight:700;font-size:16px" id="mgT">3초</p></div></div>`;
+    document.body.appendChild(o);let tl=3;window._mp=50;
+    window.mgM=d=>{window._mp=Math.max(5,Math.min(95,window._mp+d*8));const e=document.getElementById('balInd');if(e)e.style.left=window._mp+'%';};
+    const dr=setInterval(()=>{window._mp+=(Math.random()-.5)*6;window._mp=Math.max(5,Math.min(95,window._mp));const e=document.getElementById('balInd');if(e)e.style.left=window._mp+'%';},200);
+    const cd=setInterval(()=>{tl--;const e=document.getElementById('mgT');if(e)e.textContent=tl+'초';if(tl<=0){clearInterval(dr);clearInterval(cd);const ov=document.getElementById('mgOverlay');if(ov)ov.remove();if(window._mp>=35&&window._mp<=65){toast('✅ 안전! +30코인');addCoins(30);}else toast('💥 위험했지만 진행!');wbRef.child(num).update({minigameDone:true}).then(()=>doNext(num));}},1000);
+}
+
+function drawQR(num){const c=document.getElementById('qrCanvas');if(!c)return;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,120,120);x.fillStyle='#000';dQC(x,4,4,24);dQC(x,92,4,24);dQC(x,4,92,24);const h=num.split('').reduce((a,c)=>a+c.charCodeAt(0),0);for(let y=0;y<10;y++)for(let i=0;i<10;i++)if((h*(i+1)*(y+1))%3===0)x.fillRect(32+i*6,32+y*6,5,5);x.fillStyle='#667eea';x.font='bold 8px sans-serif';x.textAlign='center';x.fillText(num,60,64);}
+function dQC(x,a,b,s){x.fillRect(a,b,s,s);x.fillStyle='#fff';x.fillRect(a+3,b+3,s-6,s-6);x.fillStyle='#000';x.fillRect(a+6,b+6,s-12,s-12);}
+
+// 채팅 공용
+function loadChatRoom(prefix,num){
+    const boxId='chatBox_'+prefix+num;
+    openChatRoom=num;
+    chatRef.child(num).on('value',snap=>{
+        const msgs=snap.val()||{},box=document.getElementById(boxId);if(!box)return;
+        box.innerHTML=Object.keys(msgs).sort().map(k=>{const m=msgs[k];return `<div class="chat-msg ${m.role}"><div class="sender">${m.role==='staff'?'🚚 택배원':'📱 고객'}</div>${m.text}</div>`;}).join('');
+        box.scrollTop=box.scrollHeight;
     });
 }
-
-// ========== 상세 ==========
-function openDetail(num, silent){
-    tab(2);
-    currentView=num;
-    const w=wb[num]; if(!w) return;
-    if(!silent) toast('📋 운송장 '+num+' 조회');
-
-    let sh='';
-    for(let i=0;i<ST.length;i++){
-        const s=ST[i];
-        let dc='',cc='',tm='';
-        if(i<w.cs){dc='done';cc='done';tm=w.times[i]||'';}
-        else if(i===w.cs){dc='now';tm=w.times[i]||'';}
-        sh+=`<div class="step">
-            <div class="sl">
-                <div class="dot ${dc}">${i<w.cs?'✓':s.i}</div>
-                ${i<ST.length-1?`<div class="conn ${cc}"></div>`:''}
-            </div>
-            <div class="sc">
-                <div class="t">${s.n}</div>
-                ${tm?`<div class="tm">${tm}</div>`:''}
-                ${i<=w.cs?`<div class="ds">${s.d}</div>`:''}
-            </div>
-        </div>`;
-    }
-    const done=w.cs>=ST.length-1;
-    const nx=!done&&ST[w.cs+1];
-    document.getElementById('mainArea').innerHTML=`
-        <div class="card fade">
-            <div class="d-head">
-                <h3>📦 ${num}</h3>
-                <button class="btn-sm" onclick="showForm()">+ 새 운송장</button>
-            </div>
-            <div class="info-grid">
-                <div class="ig"><label>물품명</label><span>${w.item}</span></div>
-                <div class="ig"><label>무게</label><span>${w.wt}</span></div>
-                <div class="ig"><label>보내는 분</label><span>${w.from}</span></div>
-                <div class="ig full"><label>보내는 주소</label><span>${w.fa}</span></div>
-                <div class="ig"><label>받는 분</label><span>${w.to}</span></div>
-                <div class="ig full"><label>받는 주소</label><span>${w.ta}</span></div>
-                <div class="ig"><label>택배사</label><span>${w.cr}</span></div>
-                <div class="ig"><label>접수일시</label><span>${w.date}</span></div>
-            </div>
-            <div class="steps-title">📍 배송 진행 현황</div>
-            ${sh}
-            ${done
-                ?'<div class="done-badge">🎉 배송이 완료되었습니다!</div>'
-                :`<button class="btn-next" onclick="next('${num}')">${nx.i} 다음 단계: ${nx.n}</button>`
-            }
-        </div>`;
-}
-
-// ========== 다음단계 (Firebase 업데이트) ==========
-function next(num){
-    const w=wb[num]; if(!w||w.cs>=ST.length-1) return;
-    const newStep = w.cs + 1;
-    const updates = {};
-    updates['cs'] = newStep;
-    updates['times/'+newStep] = new Date().toLocaleString('ko-KR');
-
-    wbRef.child(num).update(updates).then(()=>{
-        toast(ST[newStep].i+' '+ST[newStep].n);
-    }).catch(err=>{
-        alert('업데이트 실패: '+err.message);
+function renderChatMessages(num){
+    ['s_','c_'].forEach(prefix=>{
+        const box=document.getElementById('chatBox_'+prefix+num);if(!box)return;
+        const msgs=chatData[num]||{};
+        box.innerHTML=Object.keys(msgs).sort().map(k=>{const m=msgs[k];return `<div class="chat-msg ${m.role}"><div class="sender">${m.role==='staff'?'🚚 택배원':'📱 고객'}</div>${m.text}</div>`;}).join('');
+        box.scrollTop=box.scrollHeight;
     });
 }
+function sendMsg(num,r){const id=r==='staff'?'chatIn_s_'+num:'chatIn_c_'+num;const inp=document.getElementById(id);if(!inp)return;const t=inp.value.trim();if(!t)return;chatRef.child(num).push({role:r,text:t,time:Date.now()});inp.value='';playSound('click');}
 
-// ========== 고객 조회 ==========
+// 직원 채팅 탭
+function renderStaffChatList(){
+    const el=document.getElementById('sChatArea');const keys=Object.keys(wb);
+    if(!keys.length){el.innerHTML='<div class="card"><h3>💬 채팅</h3><p class="desc">등록된 택배가 없어요</p></div>';return;}
+    el.innerHTML=`<div class="card fade"><h3>💬 채팅방 목록</h3><p class="desc">택배별 고객과 대화</p></div>`+
+        keys.map(k=>{
+            const w=wb[k],msgs=chatData[k]||{},mKeys=Object.keys(msgs).sort(),last=mKeys.length?msgs[mKeys[mKeys.length-1]]:null;
+            const unread=mKeys.filter(mk=>msgs[mk].role==='customer'&&msgs[mk].time>(parseInt(localStorage.getItem('lastRead_s_'+k))||0)).length;
+            return `<div class="chatroom-item" onclick="openStaffChat('${k}')"><div class="cr-left"><div class="cr-name">📦 ${k} — ${w.item}</div><div class="cr-preview">${last?((last.role==='staff'?'나: ':'')+last.text):'대화를 시작하세요'}</div></div>${unread?`<span class="cr-badge">${unread}</span>`:''}</div>`;
+        }).join('');
+}
+function openStaffChat(num){
+    openChatRoom=num;localStorage.setItem('lastRead_s_'+num,Date.now());
+    const el=document.getElementById('sChatArea');
+    el.innerHTML=`<div class="card fade">
+        <div class="d-head"><h3>💬 ${num}</h3><button class="btn-sm" onclick="renderStaffChatList();openChatRoom='';">← 목록</button></div>
+        <div class="chat-box" id="chatBox_s_${num}" style="max-height:400px"></div>
+        <div class="chat-input-row"><input type="text" id="chatIn_s_${num}" placeholder="메시지..." maxlength="100" onkeypress="if(event.key==='Enter')sendMsg('${num}','staff')"><button class="btn btn-primary" onclick="sendMsg('${num}','staff')" style="padding:10px 16px;font-size:13px">전송</button></div>
+    </div>`;
+    loadChatRoom('s_',num);
+}
+
+// 고객 채팅 탭
+function renderCustChatList(){
+    const el=document.getElementById('cChatArea');const keys=Object.keys(wb);
+    if(!keys.length){el.innerHTML='<div class="search-card"><h3>💬 채팅</h3><p>택배가 없어요</p></div>';return;}
+    el.innerHTML=`<div class="search-card fade"><h2>💬 채팅방</h2><p>택배원과 실시간 대화</p></div>`+
+        keys.map(k=>{
+            const w=wb[k],msgs=chatData[k]||{},mKeys=Object.keys(msgs).sort(),last=mKeys.length?msgs[mKeys[mKeys.length-1]]:null;
+            const unread=mKeys.filter(mk=>msgs[mk].role==='staff'&&msgs[mk].time>(parseInt(localStorage.getItem('lastRead_c_'+k))||0)).length;
+            return `<div class="chatroom-item" onclick="openCustChat('${k}')"><div class="cr-left"><div class="cr-name">📦 ${k} — ${w.item}</div><div class="cr-preview">${last?((last.role==='customer'?'나: ':'')+last.text):'대화를 시작하세요'}</div></div>${unread?`<span class="cr-badge">${unread}</span>`:''}</div>`;
+        }).join('');
+}
+function openCustChat(num){
+    openChatRoom=num;localStorage.setItem('lastRead_c_'+num,Date.now());
+    const el=document.getElementById('cChatArea');
+    el.innerHTML=`<div class="search-card fade">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:16px">💬 ${num}</h3><button class="btn-sm" onclick="renderCustChatList();openChatRoom='';">← 목록</button></div>
+        <div class="chat-box" id="chatBox_c_${num}" style="max-height:400px;text-align:left"></div>
+        <div class="chat-input-row"><input type="text" id="chatIn_c_${num}" placeholder="메시지..." maxlength="100" onkeypress="if(event.key==='Enter')sendMsg('${num}','customer')"><button class="btn btn-primary" onclick="sendMsg('${num}','customer')" style="padding:10px 16px;font-size:13px">전송</button></div>
+    </div>`;
+    loadChatRoom('c_',num);
+}
+
+// 대시보드 + 그래프
+function renderDashboard(){
+    const keys=Object.keys(wb),tot=keys.length,comp=keys.filter(k=>wb[k].cs>=6).length,ing=tot-comp;
+    let avg=0,cnt=0;keys.forEach(k=>{const w=wb[k];if(w.cs>=6&&w.startTime&&w.completedAt){avg+=(w.completedAt-w.startTime);cnt++;}});
+    const avgS=cnt?Math.round(avg/cnt/1000)+'초':'-',rate=tot?Math.round(comp/tot*100):0;
+    // 택배사별 데이터
+    const carriers={};keys.forEach(k=>{const c=wb[k].cr;if(!carriers[c])carriers[c]={t:0,d:0};carriers[c].t++;if(wb[k].cs>=6)carriers[c].d++;});
+    const cEntries=Object.entries(carriers);
+    const maxT=Math.max(...cEntries.map(([,v])=>v.t),1);
+    // 상태별 그래프
+    const stCounts=Array(7).fill(0);keys.forEach(k=>stCounts[wb[k].cs]++);
+    const maxSt=Math.max(...stCounts,1);
+
+    document.getElementById('dashArea').innerHTML=`
+        <div class="card fade"><h3>📊 배송 대시보드</h3><p class="desc">실시간 현황</p>
+            <div class="dash-grid"><div class="dash-card"><div class="dv">${tot}</div><div class="dl">전체</div></div><div class="dash-card green"><div class="dv">${comp}</div><div class="dl">완료</div></div><div class="dash-card gold"><div class="dv">${ing}</div><div class="dl">배송중</div></div><div class="dash-card pink"><div class="dv">${rate}%</div><div class="dl">완료율</div></div></div>
+            <div class="info-grid"><div class="ig"><label>평균 배송</label><span>${avgS}</span></div><div class="ig"><label>경험치</label><span>${myExp} EXP</span></div><div class="ig"><label>총 완료</label><span>${myDeliveries}건</span></div><div class="ig"><label>코인</label><span>💰${myCoins}</span></div></div>
+            <div class="exp-bar-wrap"><div class="exp-bar-fill" style="width:${getExpPct()}%"></div></div>
+        </div>
+        <div class="card"><h3>📈 택배사별 현황</h3>
+            <div class="graph-section">${cEntries.map(([c,v],i)=>`<div class="graph-row"><div class="graph-label">${c}</div><div class="graph-bar-bg"><div class="graph-bar-fill ${GRAPH_COLORS[i%GRAPH_COLORS.length]}" style="width:${(v.t/maxT*100)}%">${v.d}/${v.t}</div></div></div>`).join('')}</div>
+        </div>
+        <div class="card"><h3>📊 배송 단계별 현황</h3>
+            <div class="graph-section">${ST.map((s,i)=>`<div class="graph-row"><div class="graph-label">${s.i} ${s.n}</div><div class="graph-bar-bg"><div class="graph-bar-fill ${GRAPH_COLORS[i%GRAPH_COLORS.length]}" style="width:${(stCounts[i]/maxSt*100)}%">${stCounts[i]}건</div></div></div>`).join('')}</div>
+        </div>`;
+}
+
+function renderRankings(){rankRef.once('value',snap=>{const d=snap.val()||{},arr=Object.values(d).sort((a,b)=>b.deliveries-a.deliveries);document.getElementById('rankArea').innerHTML=`<div class="card fade"><h3>🏆 랭킹</h3><div style="margin-top:16px">${arr.length?arr.map((u,i)=>`<div class="rank-item"><div class="rank-num ${i===0?'g':i===1?'s':i===2?'b':''}">${i<3?['🥇','🥈','🥉'][i]:(i+1)}</div><div><div style="font-weight:700;font-size:14px">${u.name}</div><div style="font-size:12px;color:#999">Lv.${u.level} · ${u.carrier||''} · ${u.deliveries}건 · ${u.exp}EXP</div></div></div>`).join(''):'<p style="text-align:center;color:#aaa;padding:20px">데이터 없음</p>'}</div></div>`;});}
+
+function renderShop(){document.getElementById('shopArea').innerHTML=`<div class="card fade"><h3>🛒 상점</h3><p class="desc">💰${myCoins} 코인</p><div class="shop-grid">${SHOP_ITEMS.map(it=>{const ow=ownedSkins.includes(it.icon),eq=equippedSkin===it.icon;return `<div class="shop-item ${ow?'owned':''} ${eq?'equipped':''}" onclick="buyEquip('${it.icon}',${it.price})"><div class="si">${it.icon}</div><div class="sn">${it.name}</div><div class="sp">${eq?'✅ 장착':ow?'보유':'💰'+it.price}</div></div>`;}).join('')}</div></div>`;}
+function buyEquip(ic,pr){if(ownedSkins.includes(ic)){equippedSkin=ic;toast(ic+' 장착!');playSound('click');}else{if(myCoins<pr){toast('💰 부족!');playSound('alert');return;}myCoins-=pr;ownedSkins.push(ic);equippedSkin=ic;toast(ic+' 구매!');playSound('success');confetti();vibrate(100);}saveUserData();updateTopBar();renderShop();renderList();}
+
+// 고객
+function renderCustomerList(){
+    const el=document.getElementById('cListArea');if(!el)return;let keys=Object.keys(wb);
+    if(!keys.length){el.innerHTML='<div class="result-card" style="text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:8px">📭</div><p style="color:#aaa">택배가 없어요</p></div>';return;}
+    keys=filterSort(keys,custFilter,custSort);
+    if(!keys.length){el.innerHTML='<div class="result-card" style="text-align:center;padding:30px"><p style="color:#aaa">조건에 맞는 택배 없음</p></div>';return;}
+    el.innerHTML=`<div class="c-list-title"><span class="online-dot"></span> 전체 택배 (${keys.length}건)</div>`+
+        keys.map(k=>{const w=wb[k],s=w.cs,ti=ITEM_TYPES.find(t=>t.type===w.itemType)||ITEM_TYPES[0];const isNew=(Date.now()-(w.startTime||0))<30000;return `<div class="c-wb-card" onclick="trackDirect('${k}')"><div class="num">📦 ${k} ${ti.tag}${isNew?'<span class="new-badge">NEW</span>':''}</div><div class="meta">${w.item} · ${w.cr} · ${w.to}님</div><span class="st s${s}">${ST[s].i} ${ST[s].n}</span></div>`;}).join('');
+}
+
+function trackDirect(num){document.getElementById('tInput').value=num;customerTrackingNum=num;cTab(1);const w=wb[num];if(!w)return;playSound('click');saveRecent(num);renderTracking(num,w,document.getElementById('tResult'));document.getElementById('tResult').scrollIntoView({behavior:'smooth',block:'start'});}
+
 function track(){
-    const inp=document.getElementById('tInput');
-    const num=inp.value.trim();
-    const rd=document.getElementById('tResult');
-    if(!num){inp.style.borderColor='#ff4757';setTimeout(()=>inp.style.borderColor='#e8e8e8',800);return;}
-
-    // Firebase에서 실시간 조회
-    db.ref('waybills/'+num).once('value').then(snap=>{
-        const w=snap.val();
-        if(!w){
-            rd.innerHTML=`<div class="result-card fade"><div class="no-res"><div class="ni">🔍</div><p>운송장 번호 <b>${num}</b>에 대한<br>배송 정보를 찾을 수 없습니다.</p><p style="font-size:12px;margin-top:6px;color:#ccc">번호를 다시 확인해주세요</p></div></div>`;
-            return;
-        }
-        renderTracking(num, w, rd);
-
-        // 실시간 감시 시작 - 직원이 상태 바꾸면 자동 갱신
-        db.ref('waybills/'+num).on('value', snap2=>{
-            const w2=snap2.val();
-            if(w2) renderTracking(num, w2, rd);
-        });
-    });
+    const inp=document.getElementById('tInput'),q=inp.value.trim().toLowerCase(),rd=document.getElementById('tResult');
+    if(!q){inp.style.borderColor='#ff4757';setTimeout(()=>inp.style.borderColor='#e8e8e8',800);return;}
+    playSound('click');
+    // 검색: 번호, 물품명, 받는사람
+    if(wb[q]){customerTrackingNum=q;saveRecent(q);renderTracking(q,wb[q],rd);return;}
+    const found=Object.keys(wb).filter(k=>{const w=wb[k];return k.toLowerCase().includes(q)||w.item.toLowerCase().includes(q)||w.to.toLowerCase().includes(q);});
+    if(found.length===1){customerTrackingNum=found[0];saveRecent(found[0]);renderTracking(found[0],wb[found[0]],rd);}
+    else if(found.length>1){rd.innerHTML=`<div class="result-card fade"><p style="font-weight:700;margin-bottom:10px">🔍 ${found.length}건 검색됨</p>${found.map(k=>{const w=wb[k];return `<div class="c-wb-card" onclick="trackDirect('${k}')" style="margin-bottom:8px"><div class="num">📦 ${k}</div><div class="meta">${w.item} · ${w.to}님</div><span class="st s${w.cs}">${ST[w.cs].i} ${ST[w.cs].n}</span></div>`;}).join('')}</div>`;}
+    else{rd.innerHTML=`<div class="result-card fade"><div class="no-res"><div class="ni">🔍</div><p>"${q}" 검색 결과 없음</p></div></div>`;customerTrackingNum='';}
 }
 
-function renderTracking(num, w, rd){
-    let sh='';
-    for(let i=0;i<ST.length;i++){
-        const s=ST[i];
-        let dc='',cc='',tm='';
-        if(i<w.cs){dc='done';cc='done';tm=w.times[i]||'';}
-        else if(i===w.cs){dc='now';tm=w.times[i]||'';}
-        sh+=`<div class="step">
-            <div class="sl">
-                <div class="dot ${dc}">${i<w.cs?'✓':s.i}</div>
-                ${i<ST.length-1?`<div class="conn ${cc}"></div>`:''}
-            </div>
-            <div class="sc">
-                <div class="t">${s.n}</div>
-                ${tm?`<div class="tm">${tm}</div>`:''}
-                ${i<=w.cs?`<div class="ds">${s.d}</div>`:''}
-            </div>
-        </div>`;
-    }
-    rd.innerHTML=`
-        <div class="result-card fade">
-            <div class="r-head">
-                <h3>📦 ${num}</h3>
-                <span class="cur-st s${w.cs}">${ST[w.cs].i} ${ST[w.cs].n}</span>
-            </div>
-            <div style="background:#f0f7ff;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:12px;color:#667eea;font-weight:600;text-align:center">
-                <span class="online-dot"></span> 실시간 업데이트 중
-            </div>
-            <div class="info-grid" style="margin-bottom:18px">
-                <div class="ig"><label>물품명</label><span>${w.item}</span></div>
-                <div class="ig"><label>택배사</label><span>${w.cr}</span></div>
-                <div class="ig"><label>보내는 분</label><span>${w.from}</span></div>
-                <div class="ig"><label>받는 분</label><span>${w.to}</span></div>
-                <div class="ig full"><label>받는 주소</label><span>${w.ta}</span></div>
-                <div class="ig"><label>접수일시</label><span>${w.date}</span></div>
-            </div>
-            <div class="steps-title">📍 배송 추적</div>
-            ${sh}
-            ${w.cs>=ST.length-1?'<div class="done-badge">🎉 배송이 완료되었습니다!</div>':''}
-        </div>`;
+function renderTracking(num,w,rd){
+    if(!rd)return;const ti=ITEM_TYPES.find(t=>t.type===w.itemType)||ITEM_TYPES[0];
+    let sh='';for(let i=0;i<ST.length;i++){const s=ST[i];let dc='',cc='',tm='';if(i<w.cs){dc='done';cc='done';tm=w.times[i]||'';}else if(i===w.cs){dc='now';tm=w.times[i]||'';}sh+=`<div class="step"><div class="sl"><div class="dot ${dc}">${i<w.cs?'✓':s.i}</div>${i<ST.length-1?`<div class="conn ${cc}"></div>`:''}</div><div class="sc"><div class="t">${s.n}</div>${tm?`<div class="tm">${tm}</div>`:''}${i<=w.cs?`<div class="ds">${s.d}</div>`:''}</div></div>`;}
+    let map=w.fromCity&&w.toCity?renderMap(w.fromCity,w.toCity,w.cs):'';
+    // 메모
+    let memoHtml='';
+    if(w.memo)memoHtml=`<div class="memo-box"><label>📝 내 요청사항</label><p>${w.memo}</p></div>`;
+    if(!w.memo&&w.cs<6)memoHtml=`<div style="margin-bottom:14px"><p style="font-size:13px;font-weight:700;margin-bottom:6px">📝 배송 요청사항</p><div class="row"><input type="text" id="memoIn_${num}" placeholder="예: 문 앞에 놓아주세요" maxlength="50"><button class="btn btn-primary" onclick="saveMemo('${num}')" style="padding:12px 16px;font-size:13px">저장</button></div></div>`;
+    // 별점
+    let rat='';
+    if(w.cs>=6){if(!w.rating){rat=`<div style="margin-top:14px;text-align:center;padding:16px;background:#f8f9fa;border-radius:14px"><p style="font-weight:700;margin-bottom:8px">배송 어떠셨나요?</p><div class="star-row">${[1,2,3,4,5].map(s=>`<span class="star" onclick="setRate(${s})" id="star${s}">⭐</span>`).join('')}</div><textarea id="revIn" placeholder="한줄 리뷰..." rows="2" style="margin-top:8px;font-size:13px;resize:none"></textarea><button class="btn btn-primary" onclick="submitRev('${num}')" style="margin-top:8px;width:100%">완료</button></div>`;}else{rat=`<div style="margin-top:14px;text-align:center;padding:16px;background:#f8f9fa;border-radius:14px"><p style="font-weight:700">내 평가</p><div style="font-size:24px;margin:6px 0">${'⭐'.repeat(w.rating)}${'☆'.repeat(5-w.rating)}</div>${w.review?`<p style="font-size:13px;color:#666">"${w.review}"</p>`:''}</div>`;}}
+    // 채팅
+    let chat=`<div style="margin-top:14px"><p style="font-size:14px;font-weight:700;margin-bottom:8px">💬 택배원과 소통</p><div class="chat-box" id="chatBox_c_${num}"></div><div class="chat-input-row"><input type="text" id="chatIn_c_${num}" placeholder="메시지..." maxlength="100" onkeypress="if(event.key==='Enter')sendMsg('${num}','customer')"><button class="btn btn-primary" onclick="sendMsg('${num}','customer')" style="padding:10px 16px;font-size:13px">전송</button></div></div>`;
+    rd.innerHTML=`<div class="result-card fade">
+        <div class="r-head"><h3>📦 ${num} ${ti.tag}</h3><span class="cur-st s${w.cs}">${ST[w.cs].i} ${ST[w.cs].n}</span></div>
+        <div style="background:#f0f7ff;padding:8px 14px;border-radius:10px;margin-bottom:14px;font-size:12px;color:#667eea;font-weight:600;text-align:center"><span class="online-dot"></span> 실시간 업데이트</div>
+        ${map}${memoHtml}
+        <div class="info-grid" style="margin-bottom:18px">
+            <div class="ig"><label>물품명</label><span>${w.item}</span></div><div class="ig"><label>택배사</label><span>${w.cr}</span></div>
+            <div class="ig"><label>보내는 분</label><span>${w.from}</span></div><div class="ig"><label>받는 분</label><span>${w.to}</span></div>
+            <div class="ig full"><label>받는 주소</label><span>${w.ta}</span></div><div class="ig"><label>접수</label><span>${w.date}</span></div>
+        </div>
+        <div class="steps-title">📍 배송 추적</div>${sh}
+        ${w.cs>=6?'<div class="done-badge">🎉 배송 완료!</div>':''}
+        ${rat}${chat}
+    </div>`;
+    loadChatRoom('c_',num);
 }
+
+function saveMemo(num){const inp=document.getElementById('memoIn_'+num);if(!inp)return;const t=inp.value.trim();if(!t){toast('요청사항을 입력해주세요');return;}wbRef.child(num).update({memo:t}).then(()=>{toast('📝 요청사항 저장!');playSound('success');});}
+
+let curRate=0;
+function setRate(n){curRate=n;for(let i=1;i<=5;i++){const e=document.getElementById('star'+i);if(e)e.classList.toggle('on',i<=n);}playSound('click');}
+function submitRev(num){if(!curRate){toast('별점을 선택해주세요');return;}const rev=document.getElementById('revIn')?.value.trim()||'';wbRef.child(num).update({rating:curRate,review:rev}).then(()=>{toast('⭐ 평가 완료!');playSound('success');confetti();curRate=0;});}
+
+function saveRecent(num){let r=JSON.parse(localStorage.getItem('recent')||'[]');r=r.filter(n=>n!==num);r.unshift(num);if(r.length>8)r=r.slice(0,8);localStorage.setItem('recent',JSON.stringify(r));loadRecentSearches();}
+function loadRecentSearches(){const r=JSON.parse(localStorage.getItem('recent')||'[]'),w=document.getElementById('recentWrap');if(!w)return;if(!r.length){w.innerHTML='';return;}w.innerHTML=`<div class="recent-list"><p style="font-size:12px;color:#aaa;margin-bottom:6px;font-weight:600">최근 조회</p>${r.map(n=>`<span class="recent-item" onclick="document.getElementById('tInput').value='${n}';track()">${n}</span>`).join('')}</div>`;}
+
+if(localStorage.getItem('darkMode')==='true')document.body.classList.add('dark');
 </script>
 </body>
 </html>
